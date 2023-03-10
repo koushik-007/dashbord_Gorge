@@ -12,7 +12,6 @@ const Bundle = ({ isModalVisible, setIsModalVisible, selectedProduct, dayCount, 
 
     const [isAddToCartloading, setIsAddToCartLoading] = useState(false);
     const [productCount, setProductCount] = useState(1);
-    console.log(cartData);
   
     const handleAddToCart = (bundle) => {
         setIsAddToCartLoading(true);

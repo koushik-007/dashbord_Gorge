@@ -27,7 +27,7 @@ const Products = ({ data, dayCount, rentalPeriod, }) => {
     }
     useEffect(() => {
         getData()
-    }, []);
+    }, [data]);
     if (loading) {
         return <Col sm={12} xl={8} span={24} >
         <div style={{ marginTop: '5rem' }}>
