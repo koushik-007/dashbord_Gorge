@@ -271,7 +271,23 @@ const EditOrder = () => {
                     </>
                   }                  
                   <div className='order-btn-options'>
-                    <Dropdown overlayClassName='order-btn-options-dropdown' menu={{items: menuItems}} trigger={['click']} arrow>
+                    <Dropdown overlayClassName='order-btn-options-dropdown' 
+                    menu={{items: [
+                      {
+                        label: 'Revert to concept',
+                        key: '1',
+                        disabled: !(orderData?.status === 'Reserve')
+                      },
+                      {
+                        label: 'Revert to reserved',
+                        key: '2',
+                        disabled: !(orderData?.status === 'Concept')
+                      },
+                      {
+                        label: 'Cancel order',
+                        key: '3',
+                      }
+                    ]}} trigger={['click']} arrow>
                       <Button icon={<DashOutlined />} size='large' />
                     </Dropdown>
                   </div>
