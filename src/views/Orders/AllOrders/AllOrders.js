@@ -40,7 +40,7 @@ const AllOrders = () => {
                     const { name, firstName, lastName, rentalPeriod, orderNumber, status, price, amount, secuirityDeposit } = doc.data();
                     return {
                         key: doc.id,
-                        orderNumber: <span>#{orderNumber} </span>,
+                        orderNumber,
                         name: <span><div className="avatar">
                             {
                                 name &&

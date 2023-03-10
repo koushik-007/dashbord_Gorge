@@ -27,6 +27,7 @@ const ProductsTable = () => {
         return {
           product_name: <span style={{ display: 'flex' }}> {imageUrl ? <img src={imageUrl} alt="" width="35px" /> : <Skeleton.Image active={false} />} &nbsp; {product_name}</span>,
           key: doc.id,
+          name: product_name,
           tracking_method: <> {tracking_method === "Consumable" ? <ShoppingCartOutlined /> : <FaCubes />} &nbsp; {tracking_method}</>,
           sku,
           onlineStore: <Button size='small'><FaCode /> &nbsp; Visible</Button>,

@@ -30,7 +30,7 @@ const InfoForm = ({ showError, setCustomerDetails }) => {
                 <div className="info-box-0">
                     <div>
                         <label htmlFor="name">Name</label>
-                        <Input size='large' name='name' type='text' onChange={handleDetails} prefix={<UserOutlined />}  />
+                        <Input size='large' name='name' type='text' onChange={handleDetails} prefix={<UserOutlined />} />
                     </div>
                 </div>
                 <div className="info-box-1">
@@ -58,17 +58,17 @@ const InfoForm = ({ showError, setCustomerDetails }) => {
                 <div className="info-box-3">
                     <div>
                         <label htmlFor="phone">phone</label>
-                        <Input size='large' name='phone' onBlur={handleDetails} 
-                        prefix={
-                            <Dropdown
-                                overlayStyle={{ top: '55rem', height: '20rem', overflowY: 'scroll' }} placement="bottomLeft" 
-                                menu={<Menu onClick={(e)=> handleSelect(e.key)} items={countries.map(({ name, code }) => {
-                                    return { key: code, label: name }
-                                })}
-                                />} trigger={['click']}>
-                                <img src={image} alt="none" width={'25px'} />
-                            </Dropdown>
-                            } 
+                        <Input size='large' name='phone' onBlur={handleDetails}
+                            prefix={
+                                <Dropdown
+                                    overlayStyle={{ top: '55rem', height: '20rem', overflowY: 'scroll' }} placement="bottomLeft"
+                                    menu={{
+                                        items: countries.map(({ name, code }) => ({ key: code, label: name })),
+                                        onClick: (e) => handleSelect(e.key)
+                                    }} trigger={['click']}>
+                                    <img src={image} alt="none" width={'25px'} />
+                                </Dropdown>
+                            }
                         />
                     </div>
                 </div>

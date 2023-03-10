@@ -34,15 +34,17 @@ const ProductSearch = ({ handleAddProductData, showProducts, setShowProducts }) 
     const ref = useRef(null);
     useEffect(() => {
         function close(e) {    
-            try {
-              if (!ref.current.contains(e.target)) {
-                setShowProducts(false);
-              }
-              else {
-                //
-              }
-            } catch (error) {
-              console.log(error);
+            if (showProducts) {
+                try {
+                    if (!ref?.current?.contains(e.target)) {
+                      setShowProducts(false);
+                    }
+                    else {
+                      //
+                    }
+                  } catch (error) {
+                   // console.log(error);
+                  }
             }
           }
         document.body.addEventListener('click', close);

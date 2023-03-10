@@ -37,15 +37,13 @@ const Products = () => {
                                 overlayClassName='productBundleDropdown'
                                 onOpenChange={isVisible => setIsUpSideArrow(isVisible)}
                                 icon={isUpSideArrow ? <UpOutlined style={{ fontSize: '15px' }} /> : <DownOutlined style={{ fontSize: '15px' }} />}
-                                menu={<Menu
-                                    items={
-                                        items.map(({ label, icon, link }, index) => ({
-                                            key: index,
-                                            label: <Link to={link}>{label}</Link>,
-                                            icon: icon
-                                        }))
-                                    }
-                                />}
+                                menu={{
+                                    items: items.map(({ label, icon, link }, index) => ({
+                                        key: index,
+                                        label: <Link to={link}>{label}</Link>,
+                                        icon: icon
+                                    }))
+                                }}
                                 onClick={() => { navigate("/" + pathname.slice(1, pathname.length) + "/new") }}
                                 trigger={['click']}
                                 type="primary"

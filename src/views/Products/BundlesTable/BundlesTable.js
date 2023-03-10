@@ -11,7 +11,7 @@ const columns = [
   {
     title: 'Name',
     dataIndex: 'name',
-    sorter: (a, b) => a - b
+    sorter: (a, b) => a.bundleName.length - b.bundleName.length
   },
   {
     title: 'Online store',
@@ -31,6 +31,7 @@ const BundlesTable = () => {
       const data = res.map((doc) => {
         const { bundleName, imageUrl } = doc;
         return {
+          bundleName: bundleName,
           name:<span style={{ display: 'flex' }}> {imageUrl ? <img src={imageUrl} alt="" width="35px" /> : <Skeleton.Image active={false} />} &nbsp; {bundleName}</span>,           
           key: doc.id,
           onlineStore: <Button size='small'><FaCode /> &nbsp; Visible</Button>

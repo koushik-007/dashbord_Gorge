@@ -23,19 +23,18 @@ export const columns = [
   {
     title: '#',
     dataIndex: 'orderNumber',
-    sorter: (a, b) => a - b,
     width: 50,
+    render: (orderNumber) => <span>#{orderNumber} </span>,
+    sorter: (a, b) => a.orderNumber - b.orderNumber,
   },
   {
     title: 'Customer',
     dataIndex: 'name',
-    sorter: (a, b) => a - b,
     width: 270,
   },
   {
     title: 'Status',
     dataIndex: 'status',
-    sorter: (a, b) => a - b,
     width: 130,
     clssName: 'status',
     render: (text) => {
@@ -48,19 +47,17 @@ export const columns = [
     render: (text) => {
       return <span className='pickup'>{text} <ArrowRightOutlined /></span>
     },
-    sorter: (a, b) => a - b,
     width: 200,
   },
   {
     title: 'Return',
     dataIndex: 'return',
-    sorter: (a, b) => a - b,
     width: 200,
   },
   {
     title: 'Price',
     dataIndex: 'price',
-    sorter: (a, b) => a - b,
+    sorter: (a, b) => a.amount - b.amount,
     width: 60,
   },
   {

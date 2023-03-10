@@ -16,12 +16,11 @@ export const columns = [
     {
       title: 'Name',
       dataIndex: 'product_name',
-      sorter: (a, b) => a - b
+      sorter: (a, b) => a.name.length - b.name.length
     },
     {
       title: 'Product type',
       dataIndex: 'tracking_method',
-      sorter: (a, b) => a - b
     },
     {
       title: 'Online store',
@@ -30,6 +29,6 @@ export const columns = [
     {
       title: 'Stock Keeping Unit(SKU)',
       dataIndex: 'sku',
-      sorter: (a, b) => a.sku - b.sku
+      sorter: (a, b) => a.sku.length - b.sku.length
     },
   ];
