@@ -34,18 +34,9 @@ const ProductSearch = ({ handleAddProductData, showProducts, setShowProducts }) 
     const ref = useRef(null);
     useEffect(() => {
         function close(e) {    
-            if (showProducts) {
-                try {
-                    if (!ref?.current?.contains(e.target)) {
-                      setShowProducts(false);
-                    }
-                    else {
-                      //
-                    }
-                  } catch (error) {
-                   // console.log(error);
-                  }
-            }
+            if (!ref?.current?.contains(e.target)) {
+                setShowProducts(false);
+              }
           }
         document.body.addEventListener('click', close);
     }, []);

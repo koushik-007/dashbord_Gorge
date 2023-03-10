@@ -211,7 +211,12 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
                     className='drag-visible'
                     width={60}
                     render={(_, record) => {
-                        return <Button key={record.key} danger onClick={() => handleDeleteProduct(record)} icon={<CloseOutlined />} />
+                        return <Button 
+                        key={record.key}
+                         danger 
+                         onClick={() => handleDeleteProduct(record)} icon={<CloseOutlined />} 
+                         disabled={record.status === "returned" || record.status === "Picked up"}
+                         />
                     }}
                 />
             </Table>
