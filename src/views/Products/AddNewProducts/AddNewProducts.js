@@ -83,18 +83,17 @@ const AddNewProduct = () => {
 
   const uploadFile = async () => {
     if (imageUpload == null) return;
-    const imageRef = ref(storage, `images/${imageUpload.name}`);
-    await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
-      const url = await getDownloadURL(snapshot.ref);
-      setData((curr) => ({ ...curr, imageUrl: url, imageName: imageUpload.name }));
-    });
+    const imageRef = ref(storage, `images/${imageUpload.name}`);   
+    const snapshot = await uploadBytes(imageRef, imageUpload);
+    const url = await getDownloadURL(snapshot.ref);
+    return {imageUrl: url, imageName: imageUpload.name}
   };
-  const productCollectionsRef = collection(db, "product_collections");
 
+  const productCollectionsRef = collection(db, "product_collections");
   const onSubmit = async () => {
     setLoading(true)
-    await uploadFile();
-    const res = await addDocumentData(productCollectionsRef, { ...data, discountable: true, pricing_method : 'Flat fee', sku: data.product_name.toUpperCase() });
+    const uploads = await uploadFile();
+    const res = await addDocumentData(productCollectionsRef, { ...data, ...uploads, discountable: true, pricing_method : 'Flat fee', sku: data.product_name.toUpperCase() });
     const variationCollection = collection(db, "product_collections", res.id, 'variations');
     const pickedUp = data.tracking_method === "Rental product" ? 0 : null
     await addDocumentData(variationCollection, { price: parseFloat(data.price), stock: 0, pickedUp, product_name: data.product_name })

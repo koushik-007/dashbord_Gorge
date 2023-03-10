@@ -102,12 +102,12 @@ const Variations = ({ productId, imageUrl, price, data, setData, tracking_method
 
   const handleDeleteProperty = async () => {
     setIsDeleteLoading(true);
-    if (newColumn.length === 1) {
-      setAddProperty('')
-      setIsDeleteLoading(false);
-      setIsModalVisibleTwo(false);
-      return;
-    }
+    // if (newColumn.length === 1) {
+    //   setAddProperty('')
+    //   setIsDeleteLoading(false);
+    //   setIsModalVisibleTwo(false);
+    //   return;
+    // }
     const userDoc = doc(db, "product_collections", productId, 'columns', addPropertyId);
     await deleteDocument(userDoc);
     const newData = newColumn.filter(({ id }) => id !== addPropertyId);

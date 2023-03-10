@@ -44,26 +44,26 @@ export const routes = [
         popover: ['Products'],
         icon: <BiDockTop/>
     },
-    {
-        path: '/arrow',
-        icon: <RightOutlined />,
-        popover: [
-            {
-                name:  'Reports',
-                icon: <PlusOutlined/>
-            },
-            {
-                name:  'Reports',
-                icon: <PlusOutlined/>
-            },
-            {
-                name:  'Reports',
-                icon: <PlusOutlined/>
-            },
-            {
-                name:  'Reports',
-                icon: <PlusOutlined/>
-            }
-        ]
-    }
+    // {
+    //     path: '/arrow',
+    //     icon: <RightOutlined />,
+    //     popover: [
+    //         {
+    //             name:  'Reports',
+    //             icon: <PlusOutlined/>
+    //         },
+    //         {
+    //             name:  'Reports',
+    //             icon: <PlusOutlined/>
+    //         },
+    //         {
+    //             name:  'Reports',
+    //             icon: <PlusOutlined/>
+    //         },
+    //         {
+    //             name:  'Reports',
+    //             icon: <PlusOutlined/>
+    //         }
+    //     ]
+    // }
 ]

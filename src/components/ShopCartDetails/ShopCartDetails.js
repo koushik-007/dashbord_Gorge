@@ -41,7 +41,7 @@ const ShopCartDetails = () => {
         const amounts = cartData.map(data => data.productCount * parseFloat(data.price) * dayCount);
         var sub = amounts.reduce((a, b) => a + b, 0);
         setSubTotal(sub);
-    }, [cartData]);
+    }, [cartData,dayCount]);
     return (
         <Row>
             <Col lg={16} span={24} className='cart_products'>

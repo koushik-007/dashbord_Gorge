@@ -20,20 +20,26 @@ const Bundles = ({ data, dayCount, rentalPeriod }) => {
         allProducts.forEach(obj => {
             obj.productId = id;
         })
-    // allProducts.forEach(async (obj) => {
-    //   const { quantity, charge, id, dayCount, imageUrl, status } = obj;
-    //   const varaition = doc(db, "product_collections", obj.productId, "variations", obj.variationId);
-    //   const varaitionData = await getAData(varaition);
-    //   setProductsData((curr) => ([...curr, { ...varaitionData, imageUrl, quantity, charge, variationId: obj.variationId, productId: obj.productId, orderProductsId: id, dayCount, status }]));
-    // });
-        const charges = allProducts.map(data => parseFloat(data.price) * parseFloat(data.quantity) );
-        var total = charges.reduce((a, b) => a + b, 0);
-        setToal(total);
+        // allProducts.forEach(async (obj) => {
+        //   const { quantity, charge, id, dayCount, imageUrl, status } = obj;
+        //   const varaition = doc(db, "product_collections", obj.productId, "variations", obj.variationId);
+        //   const varaitionData = await getAData(varaition);
+        //   setProductsData((curr) => ([...curr, { ...varaitionData, imageUrl, quantity, charge, variationId: obj.variationId, productId: obj.productId, orderProductsId: id, dayCount, status }]));
+        // });
+        if (data?.fixedPrice) {
+            setToal(data?.price)
+        }
+        else {
+            const charges = allProducts.map(data => parseFloat(data.price) * parseFloat(data.quantity));
+            var total = charges.reduce((a, b) => a + b, 0);
+            setToal(total);
+        }
         setProducts(allProducts);
         setLoading(false)
     }
     useEffect(() => {
-        getData()
+        getData();
+
     }, []);
     if (loading) {
         <Col sm={12} xl={8} span={24} >
@@ -62,7 +68,7 @@ const Bundles = ({ data, dayCount, rentalPeriod }) => {
                                 <br />
                                 <span>
                                     <span>{rentalPeriod.length === 2 ? dayCount + (dayCount > 1 ? " days" : ' day') : 'from'}</span> &nbsp;
-                                    <b>{ total * dayCount}</b>
+                                    <b>{total * dayCount}</b>
                                 </span>
                             </div>
                             <Button type='primary' size='large' icon={<ShoppingCartOutlined />} />
