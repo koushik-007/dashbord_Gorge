@@ -1,0 +1,87 @@
+.paymentModalWrap .ant-modal{
+    width: 640px !important;
+}
+.paymentModalWrap .ant-modal-body{
+    padding: 0 !important;
+}
+.paymentModalWrap .ant-modal-header{
+    background: #F9FAFA;
+}
+.paymentModalContainer{
+    display: flex;
+}
+.paymentModalBox:first-child{
+    width: 41%;
+    border-right: 1px solid rgb(219, 218, 218);
+}
+.paymentModalBox:last-child{
+    width: 69%;
+}
+.paymentModalBox .totals, .paymentModalBox .method{
+    padding: 24px;
+}
+.paymentModalBox .totals h5, .paymentModalBox .method h5{
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+.paymentModalBox .totals .totals-item{
+        padding: 8px 0 8px 0;
+}
+.totals-item {
+    display: flex;
+    justify-content: space-between;
+}
+.totals-item label{
+    font-weight: 400;
+    color: #181818;
+}
+.paymentStatusMenu{
+    margin-top: 26px;
+    border: none;
+}
+.paymentStatusMenu .ant-menu-item{
+    border: 1px solid #DDE1E3;
+    margin: 0px !important;
+    color: #586c75;
+    font-weight: 500;
+    line-height: normal;
+    height: 65px;
+    display: flex;
+    align-items: center;
+}
+
+.paymentStatusMenu .ant-menu-item:first-child{
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-bottom: none;
+}
+
+.paymentStatusMenu .ant-menu-item:last-child{
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    border-top: none;
+}
+.paymentStatusMenu .ant-menu-item-active{
+    color: white !important;
+    background: rgb(43, 128, 255) !important;
+}
+.mutualPaymet{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+.mutualPaymetInput{
+    padding: 0 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.mutualPaymetInputBox{
+    width: 45%;
+}
+@media (max-width: 516px) {
+    .mutualPaymetInputBox, .mutualPaymetInputBox .ant-picker{
+        width: 100%;
+    }
+}

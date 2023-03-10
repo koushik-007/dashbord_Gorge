@@ -1,0 +1,37 @@
+.pickupTableTd .productImageDiv{
+    display: flex;
+    align-items: center;
+}
+.pickupTableTd img{
+    width: 40px;
+    height: 40px;
+    margin-right: 6px;
+}
+
+.pickupModalTable .ant-table-tbody > tr.ant-table-row-selected > td {
+    background: #ffffff !important;
+}
+.pickup_head{
+    display: flex;
+    gap: 6px;
+}
+.pickup_head p{
+    color: rgb(43, 128, 255);
+    cursor: pointer;
+}
+.pickupTableTd span{
+    display: flex;
+    justify-content: flex-end;
+}
+.deleteVariation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.deleteVariation svg {
+    font-size: 66px;
+    margin-right: 26px;
+    color: rgb(255, 118, 50);
+}

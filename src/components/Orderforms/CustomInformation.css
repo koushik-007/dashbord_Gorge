@@ -1,0 +1,35 @@
+.infoTable {
+    overflow-x: auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-column-end: 3;
+}
+
+.infoTableRow {
+    display: contents;
+}
+.infoTableRow:last-child .infoTableCell{
+    border-bottom: none;
+}
+.infoTableCell {
+    border-bottom: 1px solid rgb(221, 225, 227);
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px;
+    color: rgb(24, 24, 24);
+}
+
+.infoTableCell p span {
+    padding-left: 14px;
+    cursor: pointer;
+    align-self: center;
+    font-size: 14px;
+    color: rgb(43, 128, 255);
+}
+
+.infoTableCell p {
+    font-size: 14px;
+    color: rgb(84, 105, 114);
+}

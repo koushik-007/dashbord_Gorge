@@ -1,0 +1,321 @@
+
+.add-product-container-box {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+.add-product-title-container {
+  position: relative;
+  min-height: 1px;
+  padding: 1.6rem 1.5rem;
+  width: 100%;
+}
+
+.add-product-title-container h3 {
+  margin-bottom: 1.6rem;
+  color: rgb(24, 24, 24);
+  font-family: "proxima-nova", sans-serif;
+  font-size: 18px;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.add-product-container-description {
+  color: rgb(121, 126, 128);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 30px 0px 0px;
+}
+.img-content {
+  width: 100%;
+  max-width: 620px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(221, 225, 227);
+  border-radius: 6px;
+  text-align: left;
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: row;
+}
+.img-upload-content {
+  width: 100%;
+  height: 225px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  position: relative;
+  border: 1px dashed rgb(221, 225, 227);
+  border-radius: 6px;
+}
+.img-upload-content:hover {
+  background-color: beige;
+}
+.img-parent {
+  margin-top: 32px;
+}
+.gen-info {
+  padding: 2.6rem 0rem;
+  width: 25%;
+}
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  background: rgb(255, 255, 255);
+  color: rgb(118, 127, 130);
+  border-radius: 6px;
+  text-align: center;
+  transition: background 0.4s ease 0s;
+  cursor: pointer;
+}
+.add-product-input {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100%;
+  height: 42px;
+  padding: 0px 18px;
+  margin: 0px;
+  color: rgb(24, 24, 24);
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(226, 230, 235);
+  border-radius: 6px;
+  outline: 0px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  box-sizing: border-box;
+}
+.add-product-input:focus {
+  border: 1px solid rgb(13, 108, 224);
+}
+.add-product-label {
+  display: block;
+  color: rgb(24, 24, 24);
+  font-size: 1.4rem;
+  font-weight: 400;
+  line-height: 1.4rem;
+  margin-bottom: 0.5rem;
+  height: 1.3em;
+  width: auto;
+  margin-bottom: 6px;
+}
+.title-box-img {
+  width: 58%;
+  margin-right: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+.upload-text {
+  cursor: pointer;
+  align-self: center;
+  font-size: 14px;
+  color: rgb(43, 128, 255);
+}
+.upload-text:hover {
+  color: rgb(50, 84, 136);
+}
+.upload-small {
+  background: rgb(255, 255, 255);
+  color: rgb(118, 127, 130);
+  border-radius: 6px;
+  text-align: center;
+  transition: background 0.4s ease 0s;
+  cursor: pointer;
+  display: block;
+}
+.upload-img-container {
+  width: 100%;
+  height: 225px;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  position: relative;
+  border: 1px dashed rgb(221, 225, 227);
+  border-radius: 6px;
+  position: relative;
+}
+.change-color:hover {
+  background-color: rgb(84, 81, 81);
+}
+.img-icon-cross {
+  position: absolute;
+  display: inline-block;
+  vertical-align: middle;
+  height: 26px;
+  padding: 0px 6px;
+  color: rgb(24, 24, 24);
+  background-color: rgb(255, 255, 255);
+  font-weight: 500;
+  font-size: 12px;
+  text-align: center;
+  line-height: 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  white-space: nowrap;
+  border: 1px solid rgb(221, 225, 227);
+  text-decoration: none !important;
+  align-items: center;
+  top: 10%;
+}
+.img-icon-cross:hover {
+  border: 1px solid rgb(159, 209, 235);
+}
+.upload-img {
+  max-width: 100%;
+  max-height: 100%;
+}
+hr {
+  border-top: 1px solid #eeeeee;
+  border-color: rgb(221, 225, 227);
+  margin: 18px 0px;
+  display: block;
+  unicode-bidi: isolate;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  overflow: hidden;
+}
+.upload {
+  width: 100% !important;
+}
+.description-accordion {
+  margin: 0px;
+  color: rgb(118, 127, 130);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  display: block;
+  margin: 4px 0px 0px;
+  cursor: pointer;
+}
+.description-container-text {
+  color: rgb(118, 127, 130);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.8;
+}
+.accordion-box-content {
+  padding: 18px 26px;
+  border: 1px solid rgb(221, 225, 227);
+  border-radius: 6px;
+  background-color: rgb(246, 248, 248);
+}
+
+
+.collapse {
+  padding: 12px 0px 12px 0px;
+  width: 100%;
+  max-width: 620px;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(221, 225, 227);
+  border-radius: 6px;
+  text-align: left;
+}
+.collapse-body {
+  padding: 0rem 4rem;
+}
+.data-picker {
+  padding-left: 20px;
+  width: 50%;
+}
+.section-1 {
+  display: flex;
+  flex-direction: row;
+}
+div.ant-upload {
+  width: 100%;
+}
+.parent-add-product {
+  margin: 0;
+  width: 100%;
+}
+.price-box {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+.text-sm {
+  display: block;
+  color: rgb(24, 24, 24);
+  font-size: 14px;
+  font-weight: 510;
+  line-height: 14px;
+  margin-bottom: 5px;
+  height: 1.3em;
+  width: auto;
+  margin-bottom: 6px;
+}
+.w-75 {
+  width: 80%;
+}
+.button-box {
+  width: 20%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding: 2rem 2rem;
+}
+.button-save {
+  margin-left: 2rem;
+}
+.button-box-child {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button-section {
+  display: flex;
+  flex-direction: row;
+  width: 75%;
+}
+.gen-info {
+  padding: 5.6rem 2.6rem;
+}
+.gen-bundle {
+  padding: 2.6rem 1.6rem;
+}
+.button-1 {
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
+  height: 42px;
+  padding: 0px 18px;
+
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  line-height: 42px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  white-space: nowrap;
+  cursor: default;
+
+  text-decoration: none !important;
+}
+.button-cancel:hover {
+  box-shadow: rgb(0 0 0 / 12%) 0px 0px 400px 110px inset;
+  color: rgb(24, 24, 24);
+}
+.button-save {
+  background-color: rgb(59, 123, 219);
+  cursor: pointer
+}
+.button-save:hover {
+  background-color: rgb(20, 99, 216);
+}
+
+.disable {
+  opacity: 0.6;
+  cursor: none;
+  pointer-events: none !important;
+  text-decoration: none !important;
+}

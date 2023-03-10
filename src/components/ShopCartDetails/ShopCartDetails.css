@@ -1,0 +1,76 @@
+.cart_products{
+    border-right: 1px solid #DDE1E3;
+}
+.cart-clean{
+    color: #586c76;
+    text-align: center;
+    margin-top: 25px;
+    font-size: 20px;
+    font-weight: 500;
+}
+.cart-details-date-time{
+    width: 100%;
+    background: white;
+    padding: 20px 14px 0;
+    border: none;
+    border-radius: 0px;
+}
+.cart_details_button a button{
+    text-transform: uppercase !important;
+}
+.cart_details_button a:last-child button{
+    color: #586C76;
+    border: 1px solid #DDE1E3 !important;
+}
+.cart_table_product{
+    display: flex;
+}
+.cart_table_product img{
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+}
+.cart_table_product .cart_table_product_details{
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.cart_table_product div span:first-child{
+    font-weight: 500;
+    font-size: 17px;
+}
+.cart_table_quantity{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cart_table_quantity input{
+    text-align: center;
+    outline: none;
+}
+.cart_table_quantity button{
+    border-top: 1px solid #DDE1E3;
+    border-bottom: 1px solid #DDE1E3;
+}
+.cart_table_quantity button:first-child{
+    border-left: 1px solid #DDE1E3;
+    border-radius: 6px 0 0 6px;
+}
+.cart_table_quantity button:last-child{
+    border-right: 1px solid #DDE1E3;
+    border-radius: 0 6px 6px 0;
+}
+.cart_table_price div{
+    display: flex;
+    align-items: center;
+}
+.cart_table_price span{
+    margin-right: 8px;
+}
+.cart_table_price div svg, .cart_table_price button{
+    margin-top: 3px;
+    font-size: 12px !important;
+    color: #576C78;
+}
+

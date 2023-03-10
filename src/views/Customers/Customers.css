@@ -1,0 +1,45 @@
+.addCustomer{
+    text-align: center;
+    width: 55%;
+    margin: 0 auto;
+}
+.addCustomer h1 {
+    font-size: 26px;
+    font-weight: 600 !important;
+    margin: 12px px 0px;
+    padding-top: 4.5rem;
+}
+.addCustomer h2{
+    font-size: 18px;
+    font-weight: 400
+}
+
+.customerTable .ant-table-container table > thead > tr:first-child th:last-child,
+.customerTable .ant-table-cell:last-child{
+    text-align: right;
+}
+.customerTable tr td:last-child{
+    padding: 18px 20px !important;
+}
+
+@media (max-width: 1285px) {
+    .addCustomer{
+        width: 60%;
+    }
+ }
+ @media (max-width: 1103px) {
+    .addCustomer{
+        width: 65%;
+    }
+ }
+
+ @media (max-width: 992px) {
+    .addCustomer{
+        width: 70%;
+    }
+ }
+ @media (max-width: 768px) {
+    .addCustomer{
+        width: 90%;
+    }
+ }

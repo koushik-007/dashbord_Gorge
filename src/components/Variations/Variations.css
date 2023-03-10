@@ -1,0 +1,27 @@
+.variationTable .ant-table-thead > tr > th{
+    font-weight: 700 !important;
+}
+.variationTable .ant-table-thead > tr > th:last-child, .variationTable .ant-table-tbody > tr > td:last-child{
+    text-align: right;
+}
+
+.variationTable .ant-table-thead > tr > th:last-child{
+    cursor: pointer;
+    color: rgb(43, 128, 255);
+}
+.editable-row .ant-form-item-explain {
+    position: absolute;
+    top: 100%;
+    font-size: 12px;
+}
+.cancelBtn{
+    margin-right: 10px;
+}
+.editAndDel{
+    width: 51px !important;
+    height: 43px !important;
+}
+.oneVariationDel button{
+    width: 52px !important;
+    height: 44px !important;
+}

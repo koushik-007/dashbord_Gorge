@@ -1,0 +1,33 @@
+.custom-rightSidebar{
+    overflow: hidden;
+    height: 100vh;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: fixed;
+    background-color: #f0f2f5;    
+}
+.packing_link, .invoices_link{
+    display: flex;
+    align-items: center;
+    width: 160px;
+}
+.packing_link svg, .invoices_link svg{
+    font-size: 30px;
+    background: gray;
+    border-radius: 50%;
+    padding: 5px;
+    color: white;
+    margin-right: 12px;
+}
+.packing_link span, .invoices_link span{
+    color: black;
+    font-weight: 500;
+}
+.packing_link span:hover{
+    color: blue;
+    text-decoration: underline;
+}
+.invoices_link svg{
+    background: rgb(255, 118, 50);
+}

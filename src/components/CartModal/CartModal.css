@@ -1,0 +1,10 @@
+.bundleProducts{
+    display: flex;
+    align-items: flex-start;
+}
+.bundleProducts .quantity{
+    opacity: 0.6;
+    padding: 5px !important;
+    font-size: 14px !important;
+    margin-right: 6px;
+}

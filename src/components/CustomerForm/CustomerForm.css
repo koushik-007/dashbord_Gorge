@@ -1,0 +1,181 @@
+.customerRow {
+    padding: 1rem 3rem;
+}
+
+.errorBox {
+    color: red;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.errorBox p {
+    margin-right: 5px;
+}
+
+.infoBox {
+    padding: 26px 0px;
+}
+
+.infoBox h3 {
+    margin: 0px;
+    color: rgb(24, 24, 24);
+    font-family: proxima-nova, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.infoBox div {
+    margin: 30px 0px 0px;
+    color: rgb(118, 127, 130);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.customerForm {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 6px;
+    border: 2px solid rgb(227, 224, 224);
+    width: 90%;
+    margin-bottom: 1rem;
+}
+
+.customerForm .ant-collapse-header {
+    background-color: white;
+}
+
+.divider {
+    height: 1px !important;
+    border-top: none !important;
+    margin: 18px 0px;
+    background-color: rgb(221, 225, 227);
+}
+
+.formContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.formBox {
+    width: 48%;
+}
+
+.formBox label {
+    display: block;
+    color: rgb(24, 24, 24);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    margin-bottom: 12px;
+}
+
+.formBox .customFormInput {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+
+.formBox .ant-select-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formBox .customFormInput:not(textarea),
+.formBox .ant-select-selector {
+    width: 100%;
+    outline: 0px !important;
+    font-size: 14px;
+    font-weight: 500 !important;
+    color: rgb(24, 24, 24);
+    background: rgb(255, 255, 255);
+    border-radius: 6px !important;
+    height: 42px !important;
+}
+.formBox textarea{
+    width: 100%;
+    outline: 0px !important;
+    font-size: 14px;
+    font-weight: 500 !important;
+    color: rgb(24, 24, 24);
+    background: rgb(255, 255, 255);
+    border-radius: 6px !important;
+}
+.customFormInputNumber {
+    margin-bottom: 24px;
+}
+
+.customFormInputNumber .ant-input-number-affix-wrapper {
+    width: 100%;
+}
+
+.customFormInputNumber .ant-input-number-input {
+    height: 42px;
+}
+
+.customFormInputNumber .ant-form-item-control-input {
+    margin-bottom: 24px;
+}
+
+.customFormInputNumber .ant-input-number-affix-wrapper {
+    border-radius: 6px !important;
+}
+
+.address {
+    width: 100%;
+}
+
+.submitBtn {
+    width: 93%;
+    display: flex;
+    justify-content: end;
+    gap: 1rem;
+}
+
+.submitBtn button:first-child {
+    margin-right: 1rem;
+}
+
+.submitBtn button:last-child.ant-btn-primary[disabled] {
+    color: white;
+    background: #7cb0fc;
+}
+
+.example {
+    margin: 20px 0;
+    margin-bottom: 20px;
+    padding: 30px 50px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.notify_saved_customer .ant-message-notice-content {
+    background: #038edc;
+    color: white;
+    font-weight: 400;
+    font-size: large;
+    width: 55%;
+    min-width: 320px;
+}
+
+.notify_saved_customer .anticon.anticon-info-circle{
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .customerRow .ant-col-lg-17 {
+        flex: 0 0 95%;
+        max-width: 992px !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .formBox {
+        width: 100%;
+    }
+}

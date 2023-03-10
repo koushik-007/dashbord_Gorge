@@ -1,0 +1,47 @@
+.ant-modal {
+    width: 100% !important;
+    max-width: 620px !important;
+}
+
+.ant-modal-mask {
+    background-color: rgba(191, 197, 203, 0.6);
+}
+
+.ant-modal-content {
+    top: 8.5rem;
+    border-radius: 8px;
+}
+
+.ant-modal-header {
+    border-radius: 8px 8px 0 0;
+}
+
+.propertyBtn {
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+}
+
+.deleteVariation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+}
+
+.deleteVariation svg, .notUnique svg {
+    font-size: 66px;
+    margin-right: 26px;
+    color: rgb(255, 118, 50);
+}
+
+.notUnique {
+    display: flex;
+    margin: 0px;
+    font-size: 18px;
+}
+
+@media (max-width: 620px) {
+    .ant-modal {
+        width: 90% !important;
+    }
+}

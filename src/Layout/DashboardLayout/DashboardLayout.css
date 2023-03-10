@@ -1,0 +1,23 @@
+.site-layout {
+    width: calc(100vw - 61px) !important;
+    margin-left: 61px;
+}
+
+.site-layout h1 {
+    display: inline-block;
+    max-width: 100%;
+    margin-left: 3rem;
+    font-size: 20pt;
+    line-height: 61px;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: rgb(56, 54, 54);
+    font-weight: 400 !important;
+}
+
+.main_content {
+    margin: 75px 16px 0;
+    overflow: initial,
+}

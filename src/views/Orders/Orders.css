@@ -1,0 +1,8 @@
+.content_design{
+    padding: 26px;
+    flex: 1 1 0%;
+    order: 2;
+    height: calc(100vh - 62px);
+    z-index: 29;
+    position: relative;
+}

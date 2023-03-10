@@ -1,0 +1,18 @@
+.ant-checkbox-indeterminate .ant-checkbox-inner::after{
+    background-color: white;
+}
+.head_table{
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+.head_table p{
+    margin: 0 10px;
+}
+.head_table p:last-child{
+    color: blue;
+    cursor: pointer;
+}
+.ant-table-row-selected{
+    background-color: white !important;
+}

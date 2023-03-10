@@ -1,0 +1,97 @@
+.ordertable .avatar div:first-child {
+    background: rgb(22, 160, 133);
+}
+
+.reserved,
+.concept, .picked, .mixed, .returned {
+    display: inline-block;
+    border-radius: 18px;
+    padding: 6px 18px;
+    text-align: center;
+    font-weight: 600;
+    min-width: 110px;
+    cursor: pointer;
+    height: 40px;
+    line-height: normal;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+}
+
+.reserved {
+    border: 1px solid rgb(43, 128, 255);
+    background: rgb(43, 128, 255);
+}
+
+.concept {
+    background: rgb(191, 197, 203);
+    border: 1px solid rgb(191, 197, 203);
+}
+.picked{
+    background: rgb(255, 118, 50);
+    border: 1px solid rgb(255, 118, 50);
+}
+.pickup {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.mixed{
+    color: rgb(32, 94, 186);
+    border: 1px solid rgb(32, 94, 186);
+    background: transparent;
+}
+.returned{
+    background: rgb(116, 204, 32);
+    border: 1px solid rgb(116, 204, 32);
+}
+.paymentStatus .ant-btn-group {
+    width: 100%;
+}
+
+.paymentStatus button {
+    width: 75%;
+    font-size: 15px;
+    font-weight: 500;
+    text-align: left;
+}
+
+.paymentStatus .paid button {
+    background: #74cc20 !important;
+    border-color: #74cc20;
+}
+
+.paymentStatus .paid button:hover {
+    background: #6dbe20 !important;
+    border-color: #6dbe20;
+}
+
+.paymentStatus .due button {
+    background: #ff7632 !important;
+    border-color: #ff7632;
+}
+
+.paymentStatus .due button:hover {
+    background: #f36119 !important;
+    border-color: #6dbe20;
+}
+
+.paymentStatus .overpaid button {
+    background: #e3121a;
+    border-color: #e3121a;
+}
+
+.paymentStatus .overpaid button:hover {
+    background: #ce0f15;
+}
+
+
+.paymentStatusDropdown {
+    width: 165px;
+    position: relative;
+    bottom: 6.5px;
+}
+
+.paymentStatusDropdown .ant-dropdown-menu-item:hover {
+    color: white;
+    background: rgb(43, 128, 255) !important;
+}

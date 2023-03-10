@@ -1,0 +1,186 @@
+.inventory_content {
+    width: 100%;
+    background: rgb(255, 255, 255);
+    border: 1px solid rgb(221, 225, 227);
+    border-radius: 6px;
+    text-align: left;
+    max-width: 100%;
+    padding-bottom: 12px;
+}
+
+.inventory_content .ant-tabs-nav-wrap {
+    padding: 0px 12px;
+}
+
+.inventory_content .ant-tabs-tab-btn {
+    padding: 0px 0px 0px;
+}
+
+.type_add_inventory {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0px 12px;
+    margin-bottom: 12px;
+}
+
+.type_add_inventory .ant-select {
+    width: 92%;
+}
+
+.inventory_table_image {
+    display: flex;
+    align-items: center;
+}
+
+.inventory_table_image .inventory_span {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.inventory_table_image .imageDiv {
+    width: 43px;
+    height: 43px;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(221, 225, 227);
+    border-radius: 0px;
+    text-align: center;
+    margin-right: 12px;
+}
+
+.inventory_table_image img {
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+}
+
+.inventory_table_image .inventory_span svg {
+    margin-right: 6px;
+}
+
+.inventory_add_sub button {
+    position: relative;
+    height: 42px;
+    width: 63px;
+    border-radius: 6px;
+    outline: none;
+    white-space: nowrap;
+    border: 1px solid rgb(221, 225, 227);
+    background: #fff;
+    cursor: pointer;
+}
+
+.inventory_add_sub button span:first-child {
+    position: relative;
+    top: -6px;
+    left: -4px;
+}
+
+.inventory_add_sub button span:last-child {
+    position: relative;
+    bottom: -7px;
+}
+
+.inventory_add_sub button::after {
+    content: "";
+    position: absolute;
+    border-top: 1px solid rgb(24, 24, 24);
+    width: 45%;
+    transform: rotate(-45deg);
+    transform-origin: 0% 0%;
+    left: 33%;
+    bottom: 20%;
+}
+
+.inventory_modal .ant-input-number-handler-wrap {
+    opacity: 1;
+}
+
+.inventory_modal_box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.inventory_modal_container hr {
+    border-color: rgb(221, 225, 227);
+    margin: 18px 0px;
+}
+
+.inventory_modal_box .inventory_modal_sub_box:first-child {
+    width: 30%;
+}
+
+.inventory_modal_sub_box:first-child .ant-input-number {
+    width: 100%;
+    margin-top: 9px;
+}
+
+.inventory_modal_box .inventory_modal_sub_box:last-child {
+    width: 65%;
+}
+
+.inventory_modal_sub_box:last-child .ant-select {
+    width: 100%;
+    margin-top: 9px;
+}
+
+.inventory_modal_box label {
+    color: rgb(24, 24, 24);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    display: block;
+}
+
+.inventory_modal_box:last-child .inventory_modal_sub_box:first-child,
+.inventory_modal_box:last-child .inventory_modal_sub_box:last-child {
+    width: 47%;
+}
+
+.inventory_modal_box .ant-picker {
+    width: 100%;
+    margin-top: 9px;
+}
+
+.inventory_pop {
+    width: 350px;
+    max-width: 350px;
+}
+
+.inventory_pop_container {
+    width: 100%;
+    padding: 10px 10px 15px;
+}
+
+.inventory_pop_box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.inventory_pop_box .ant-input-number {
+    width: 58%;
+}
+.inventory_pop_box .ant-input-number-handler-wrap{
+    opacity: 1;
+}
+.inventory_pop_box .inventory_count {
+    width: 42%;
+}
+
+.inventory_count {
+    text-align: center;
+    font-size: 30px;
+    color: rgb(118, 127, 130);
+}
+.inventory_pop .ant-popover-inner-content{
+    padding: 18px;
+    margin-top: 12px;
+    text-align: right;
+}
+.inventory_pop .ant-popover-inner-content button:first-child{
+    margin-right: 16px;
+}

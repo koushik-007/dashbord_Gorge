@@ -1,0 +1,7 @@
+.bundlesTable .ant-table-container table > thead > tr:first-child th:last-child,
+.bundlesTable .ant-table-cell:last-child{
+    text-align: right;
+}
+.bundlesTable tr td:last-child{
+    padding: 18px 20px !important;
+}

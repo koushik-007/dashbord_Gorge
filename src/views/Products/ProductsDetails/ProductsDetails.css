@@ -1,0 +1,7 @@
+.ant-breadcrumb ol{
+    margin-left: 2rem;
+    padding-top: 2px;
+}
+.ant-breadcrumb ol li{
+    font-size: 2rem;
+}

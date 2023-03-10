@@ -1,0 +1,9 @@
+.order-edit-loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.edit_content{
+    width: 82vw !important;
+}

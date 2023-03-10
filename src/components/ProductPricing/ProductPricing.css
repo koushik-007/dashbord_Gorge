@@ -1,0 +1,17 @@
+.pricing_method{
+    width: 100%;
+    max-width: 620px;
+    background: rgb(255, 255, 255);
+    border: 1px solid rgb(221, 225, 227);
+    border-radius: 6px;
+    text-align: left;
+    padding: 18px;
+}
+.pricing_box{
+    padding: 10px;
+    border: 1px solid rgb(221, 225, 227);
+    border-radius: 6px;
+    background-color: rgb(246, 248, 248);
+    width: 540px;
+    height: 130px;
+}
