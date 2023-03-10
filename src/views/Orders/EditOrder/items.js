@@ -1,18 +1,14 @@
 export const  menuItems=[
     {
-      label: 'Duplicate order',
+      label: 'Revert to concept',
       key: '1',
     },
     {
-      label: 'Revert to concept',
+      label: 'Revert to reserved',
       key: '2',
     },
     {
-      label: 'Revert to reserved',
-      key: '3',
-    },
-    {
       label: 'Cancel order',
-      key: '4',
+      key: '3',
     }
 ]
