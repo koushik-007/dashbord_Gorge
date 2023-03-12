@@ -2,7 +2,7 @@ import React from 'react';
 import Header from '../../components/Header';
 import { Button, Col, Input, Row, Typography, Layout, Tabs } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Orders.css'
 import AllOrders from './AllOrders/AllOrders';
 
@@ -11,6 +11,8 @@ const { Title } = Typography;
 
 const Orders = () => {
     let navigate = useNavigate();
+    let [searchParams, setSearchParams] = useSearchParams();
+    let activeKey = searchParams.get('filters') ? searchParams.get('filters') : 'all'
     return (
         <>
             <Header>
@@ -39,11 +41,14 @@ const Orders = () => {
                 </Row>
             </Header>
             <Content className='content_design main_content'>
-                <Tabs defaultActiveKey="1" items={[
-                    { label: "ALL", key: '1', children:  <AllOrders/> },
-                    { label: "Upcoming", key: '2', children: <h1>abc</h1> },
-                    { label: "Late", key: '3', children: <h1>abc</h1>},
-                    { label: "With shortage", key: '4', children: <h1>abc</h1>},
+                <Tabs 
+                defaultActiveKey={activeKey}
+                activeKey={activeKey}
+                onChange={(key) => key === 'all' ? setSearchParams({}) : setSearchParams({filters: key})}
+                 items={[
+                    { label: "ALL", key: 'all', children:  <AllOrders activeKey={activeKey}/> },
+                    { label: "Upcoming", key: 'upcoming', children: <AllOrders activeKey={activeKey}/> },
+                    { label: "Late", key: 'late', children: <AllOrders activeKey={activeKey}/>},
                 ]}>                    
                 </Tabs>
             </Content>

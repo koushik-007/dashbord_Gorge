@@ -53,8 +53,7 @@ const ProductsDetails = () => {
                             { label: 'Inventory', key: `/products/details/${id}/inventory`, children: <Inventory tracking_method={product?.tracking_method} productName={product?.product_name} imageUrl={product.imageUrl} data={data} setData={setData} productId={id} /> },
                             { label: 'Variations', key: `/products/details/${id}/variations`, children: <Variations product_name={product?.product_name} tracking_method={product?.tracking_method} productId={id} imageUrl={product.imageUrl} price={parseFloat(product.price)} data={data} setData={setData} /> },
                             { label: 'Pricing', key: `/products/details/${id}/pricing`, children: <ProductPricing totalVariation={data.length} product={product} productId={id} setProduct={setProduct} /> },
-                            { label: 'Settings', key: `/products/details/${id}/settings`, children: <ProductSettings product={product} productId={id} setProduct={setProduct} /> },
-                            { label: 'History', key: `/products/details/${id}/history`, children: <div>history</div> },
+                            { label: 'Settings', key: `/products/details/${id}/settings`, children: <ProductSettings product={product} productId={id} setProduct={setProduct} /> },                            
                         ]} />
                 </Content>
             </>

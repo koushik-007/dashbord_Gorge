@@ -54,7 +54,7 @@ const ProductsTable = () => {
   }
   return (
     <div style={data.length < 8 ? { height: '90vh' } : {}}>
-      <div className='head_table'>
+      {/* <div className='head_table'>
         <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
         <p
         >
@@ -66,7 +66,7 @@ const ProductsTable = () => {
           </p>
         }
 
-      </div>
+      </div> */}
       <Table
         size='middle'
         loading={loading}

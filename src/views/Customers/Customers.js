@@ -86,7 +86,7 @@ const Customers = () => {
                             :
 
                             <div>
-                                <div className='head_table'>
+                                {/* <div className='head_table'>
                                     <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
                                     <p
                                     >
@@ -98,7 +98,7 @@ const Customers = () => {
                                         </p>
                                     }
 
-                                </div>
+                                </div> */}
                                 <Table
                                     className='customerTable'
                                     size='middle'

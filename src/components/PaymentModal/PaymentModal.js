@@ -21,13 +21,13 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, orderData, selectedKey, set
     const [loading, setLoading] = useState(false);
     const [outstanding, setOutstanding] = useState(0);
     const [registerPrice, setRegisterPrice] = useState(0);
-    useEffect(()=> {
+    useEffect(() => {
         let outstanding = Number(Math.abs(price - (amount)).toFixed(2));
         form.setFieldValue('amount', outstanding)
         setOutstanding(outstanding);
         setRegisterPrice(outstanding);
-    },[isModalOpen]);
-   
+    }, [isModalOpen]);
+
     const handleRegisterPayment = async () => {
         try {
             setLoading(true);
@@ -46,17 +46,27 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, orderData, selectedKey, set
                 newData.splice(index, 1, { ...item, ...filterValue });
                 await updateDoc(orderDocRef, filterValue);
                 setData(newData);
+                setIsModalOpen(false);
+                message.info(
+                    {
+                        content: <div>
+                            Payment is added
+                        </div>,
+                        className: 'notify_saved_customer',
+                    });
+                form.resetFields();
+                setLoading(false);
             }
-            setIsModalOpen(false);
-            message.info(
-                {
-                    content: <div>
-                        Payment is added
-                    </div>,
-                    className: 'notify_saved_customer',
-                });
-            form.resetFields();
-            setLoading(false);
+            else {
+                setIsModalOpen(false);
+                message.error(
+                    {
+                        content: <div>
+                            Payment is not added
+                        </div>,
+                        className: 'notify_saved_customer',
+                    });
+            }
         } catch (error) {
             console.log('Validate Failed:', error);
             message.info(
@@ -87,7 +97,7 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, orderData, selectedKey, set
                             {
                                 registerPrice + amount > price ?
                                     <Button danger type='primary'>
-                                       Amount is over. It should be {price - amount}
+                                        Amount is over. It should be {price - amount}
                                     </Button>
                                     :
                                     <Button

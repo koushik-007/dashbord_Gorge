@@ -57,7 +57,7 @@ export const routes = [
         component: <AddCustomer/>,
     },
     {
-        path: '/customers/details/:id/edit',
+        path: '/customers/details/:id/*',
         component: <CustomerDetails/>,
     },
     {

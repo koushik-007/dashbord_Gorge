@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../../components/Header'
-import { useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Form, Layout, message, Spin, Tabs } from 'antd';
 import CustomerForm from '../../../components/CustomerForm/CustomerForm';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, getAData } from '../../../Firebasefunctions/db';
+import CustomerOrder from '../CustomerOrder/CustomerOrder';
 
 
 const { Content } = Layout;
 
 const CustomerDetails = () => {
     const { id } = useParams();
+    const { pathname } = useLocation();
+    const naviage = useNavigate();
     const [form] = Form.useForm();
     const [customerDetails, setCustomerDetails] = useState({});
     const [loading, setLoading] = useState(false);
@@ -53,9 +56,13 @@ const CustomerDetails = () => {
                             <h1> {form.getFieldValue("name")} </h1>
                         </Header>
                         <Content className='main_content'>
-                            <Tabs defaultActiveKey="1" items={[
+                            <Tabs 
+                            defaultActiveKey={pathname}
+                            activeKey={pathname}
+                            onChange={(key) => naviage(key)}
+                             items={[
                                 {
-                                    label: 'Information', key: '1', children: <Form
+                                    label: 'Information', key: `/customers/details/${id}/edit`, children: <Form
                                         form={form}
                                         name="customer-form"
                                         className="customer-form"
@@ -73,8 +80,7 @@ const CustomerDetails = () => {
                                         <CustomerForm loading={isUpdateLoading} isDelete={true} id={id} isDisabled={isDisabled} />
                                     </Form>
                                 },
-                                { label: 'Orders', key: "2", children: <h1>orders</h1> },
-                                { label: "Cards on file", key: "3", children: 'aa' }
+                                { label: 'Orders', key: `/customers/details/${id}/orders`, children: <CustomerOrder customerId={id} /> },                                
                             ]}>
                             </Tabs>
                         </Content>

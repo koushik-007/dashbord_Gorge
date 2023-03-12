@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Spin, Table } from 'antd';
-import Menu from "../../../components/Menu"
-import { columns, items } from './tableHelper';
+import { columns } from './tableHelper';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { db } from '../../../Firebasefunctions/db';
 import './AllOrder.css';
@@ -9,9 +8,10 @@ import TableCells from './TableCells';
 import { useContext } from 'react';
 import { AllOrderDataProvder } from '../../../context/AllOrderDataContext';
 
+
 const { Column } = Table;
 
-const AllOrders = () => {
+const AllOrders = ({ activeKey }) => {
     const [data, setData] = useContext(AllOrderDataProvder)
     const [loading, setLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -69,6 +69,27 @@ const AllOrders = () => {
         getData();
     }, []);
 
+    const filterData = useMemo(() => {
+        if (activeKey === 'all') {
+            return data;
+        }
+        if (activeKey === 'upcoming') {
+            const filter = data.filter((item) => item.status === "Reserved" || item.status === "Mixed")
+            return filter;
+        }
+        if (activeKey === 'late') {
+            const filter = data.filter((item) => {
+                if (item.return === "No date") {
+                    return false
+                }
+                let diff = new Date().getTime() - new Date(item.return).getTime();
+                if (diff > 0) {
+                    return item
+                }
+            })
+            return filter;
+        }
+    }, [activeKey, data]);
 
     return (
         <div>
@@ -79,22 +100,27 @@ const AllOrders = () => {
                     </div>
                     :
                     data.length === 0 ?
-                        <div className='addCustomer'>
-                            <h1>Create your first order</h1>
-                            <h2>Create and manage your orders with live availability and automatic pricing calculations.
-                                Then, try reserving, picking up, and returning items on an order to get familiar with the workflow</h2>
-                        </div>
+                        filterData.length === 0 ?
+                            <div className='addCustomer'>
+                                <h1>No results found for the selected filters</h1>
+                            </div>
+                            :
+                            <div className='addCustomer'>
+                                <h1>Create your first order</h1>
+                                <h2>Create and manage your orders with live availability and automatic pricing calculations.
+                                    Then, try reserving, picking up, and returning items on an order to get familiar with the workflow</h2>
+                            </div>
                         :
                         <div>
                             <div className='head_table'>
-                                <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
+                                {/* <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
                                 <p>{selectedRowKeys.length} products selected</p>
                                 {
                                     selectedRowKeys.length === 0 ?
                                         <p onClick={handleSelectAll}>Select all {data.length} products</p>
                                         :
                                         <p onClick={() => setSelectedRowKeys([])}>Clear selection</p>
-                                }
+                                } */}
                             </div>
                             <Table
                                 className='ordertable'
@@ -102,7 +128,7 @@ const AllOrders = () => {
                                 bordered
                                 loading={loading}
                                 rowSelection={rowSelection}
-                                dataSource={data}
+                                dataSource={filterData}
                                 components={{
                                     body: {
                                         cell: TableCells,
@@ -130,7 +156,7 @@ const AllOrders = () => {
                                             })
                                         }
                                     />)
-                                }                               
+                                }
                             </Table>
                         </div>
             }
