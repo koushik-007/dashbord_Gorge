@@ -10,7 +10,7 @@ const columns = [
         title: 'Product',
         dataIndex: 'product',
         render: (product, record) => {
-            return <span> {product} - <Variants data={record.rest}/></span>
+            return <span> {product} - {record.isOpenShortageModalBundle ? '' : <Variants data={record.rest}/>}</span>
         }
       },
       {
@@ -21,18 +21,33 @@ const columns = [
       
 ]
 
-const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource}) => {
-    const data = useMemo(()=> dataSource.map(({charge,id, dayCount,imageUrl,key,orderProductsId,pickedUp,price,productId,product_name,quantity,status,stock,variationId, ...rest}) => {
-        return {
-            product: product_name,
-            issue: <span>{Math.abs(stock - quantity)} short</span>,
-            rest
+const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource, isOpenShortageModalBundle=false}) => {
+    const data = useMemo(()=> {
+        if (isOpenShortageModalBundle) {
+            dataSource.map(({bundleName, stock, quantity}, index) => {
+                return {
+                    key: index,
+                    product: bundleName,
+                    issue: <span>{Math.abs(stock - quantity)} short</span>,
+                    isOpenShortageModalBundle
+                }
+            })
         }
-    }), [dataSource])
+        else{
+            dataSource.map(({charge,id, dayCount,imageUrl,key,orderProductsId,pickedUp,price,productId,product_name,quantity,status,stock,variationId, ...rest}, index) => {
+                return {
+                    key: index,
+                    product: product_name,
+                    issue: <span>{Math.abs(stock - quantity)} short</span>,
+                    rest
+                }
+            })
+        }
+    }, [dataSource, isOpenShortageModalBundle])
     return (
         <Modal
         destroyOnClose={true}
-        open={isShowModal}
+        open={isShowModal || isOpenShortageModalBundle}
         title="Shortage"
         onCancel={() => setIsShowModal(false)}
         style={{top: -20}}

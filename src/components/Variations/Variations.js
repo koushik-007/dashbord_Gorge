@@ -191,7 +191,6 @@ const Variations = ({ productId, imageUrl, price, data, setData, tracking_method
         if (index > -1) {
           const variationDoc = doc(db, "product_collections", productId, 'variations', key);
           await editData(variationDoc, row);
-
           const item = newData[index];
           newData.splice(index, 1, { ...item, ...row });
           setData(newData);

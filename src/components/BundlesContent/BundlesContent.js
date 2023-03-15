@@ -4,13 +4,15 @@ import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import "./BundlesContent.css";
 import { FaBoxOpen } from 'react-icons/fa';
 import { collection, doc, updateDoc } from 'firebase/firestore';
-import { addDocumentData, db, deleteDocument, getAllData } from '../../Firebasefunctions/db';
+import { addDocumentData, db, deleteDocument, getAData, getAllData } from '../../Firebasefunctions/db';
 import { columns, CustomCell } from './tableHelper';
 import BundleDeleteModal from '../BundleModals/BundleDeleteModal';
 import { useRef } from 'react';
+import { useMemo } from 'react';
+import { useDebounce } from '../../customhook/debounce';
 
 const { Column } = Table;
-const BundlesContent = ({ BundlesId }) => {
+const BundlesContent = ({ BundlesId, bundleData }) => {
 
   const [data, setData] = useState([])
   const [showOptions, setShowOptions] = useState(false);
@@ -20,7 +22,7 @@ const BundlesContent = ({ BundlesId }) => {
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const productCollectionsRef = collection(db, "product_collections");
-  const bundlesProCollRef = collection(db, "bundles_collections", BundlesId, "product_collections");  
+  const bundlesProCollRef = collection(db, "bundles_collections", BundlesId, "product_collections");
 
   const getData = async () => {
     setloading(true)
@@ -29,7 +31,7 @@ const BundlesContent = ({ BundlesId }) => {
   }
   const ref = useRef(null);
 
-  function close(e) {    
+  function close(e) {
     try {
       if (!ref.current.contains(e.target)) {
         setShowOptions(false);
@@ -42,32 +44,33 @@ const BundlesContent = ({ BundlesId }) => {
     }
   }
 
-  const datasource = async () => {  
+  const datasource = async () => {
     const productsOfBundle = await getAllData(bundlesProCollRef);
     if (productsOfBundle.length > 0) {
       const configuretableData = productsOfBundle.map((data) => {
-        const { imageUrl, product_name, quantity, productId, ...rest} = data;
+        const { imageUrl, product_name, quantity, productId, variation, ...rest } = data;
         return {
           imageUrl: imageUrl,
           product_name,
-          quantity,          
+          quantity,
           BundlesId,
           productId,
+          variation,
           ...rest
         }
       });
       setAddproductToBundle(configuretableData);
-      setloading(false);
-    }    
+    }
+    setloading(false);
   }
-  useEffect(() => {    
+  useEffect(() => {
     getData();
-    datasource();    
+    datasource();
   }, []);
 
-useEffect(()=> {
-  document.body.addEventListener('click', close);  
-},[])
+  useEffect(() => {
+    document.body.addEventListener('click', close);
+  }, [])
 
   const handleAddToBundle = async (product) => {
     setloading(true);
@@ -82,7 +85,7 @@ useEffect(()=> {
       productId: id,
       quantity: 1,
       variation: 'any'
-    }]));    
+    }]));
     setloading(false);
   }
   const handleDeleteBundle = async (bundleDocId) => {
@@ -97,33 +100,82 @@ useEffect(()=> {
 
   const handleQuantity = async (value, id) => {
     if (value < 1) {
-        return;
+      return;
     }
     const newData = [...addproductToBundle];
     const index = newData.findIndex((item) => id === item.id);
     if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, { ...item, quantity: value });
-        const bundlesProDocRef = doc(db, "bundles_collections", BundlesId, "product_collections", id); 
-        await updateDoc(bundlesProDocRef, {quantity: value});
-        setAddproductToBundle(newData);
+      const item = newData[index];
+      newData.splice(index, 1, { ...item, quantity: value });
+      const bundlesProDocRef = doc(db, "bundles_collections", BundlesId, "product_collections", id);
+      await updateDoc(bundlesProDocRef, { quantity: value });
+      setAddproductToBundle(newData);
     }
-}
+  }
+  const [search, setSearch] = useState('');
+  const debouncevalue = useDebounce(search, 300);
+  const filterData = useMemo(() => {
+    if (!debouncevalue || debouncevalue === '') {
+      return data
+    } else {
+      const filtered = data.filter((item) => item?.product_name.toLowerCase().match(debouncevalue.toLowerCase()));
+      if (!filtered.length) {
+        return []
+      } else if (Array.isArray(filtered)) {
+        return filtered
+      }
+    }
 
+  }, [debouncevalue, data]);
+
+
+  useEffect(() => {
+    const setPrice = async () => {
+      let sum = 0;
+      let stock = []
+      for (let i = 0; i < addproductToBundle.length; i++) {
+        const item = addproductToBundle[i];
+        const { productId, variation, quantity } = item;
+        if (variation === 'any') {
+          const productDocRef = collection(db, "product_collections", productId, "variations");
+          const productData = await getAllData(productDocRef);
+          let x = parseFloat(productData[0]?.price) * parseFloat(item.quantity)
+          sum += x
+          stock.push(parseFloat(productData[0]?.stock ? productData[0]?.stock : 0) / quantity)
+        }
+        else {
+          const variationDocRef = doc(db, "product_collections", productId, "variations", variation);
+          const variationD = await getAData(variationDocRef);
+          let x = parseFloat(variation?.price) * parseFloat(item.quantity)
+          sum += x
+          stock.push(parseFloat(variationD?.stock ? variationD?.stock : 0) / quantity)
+        }
+      }
+      const bundleDocRef = doc(db, "bundles_collections", BundlesId);
+      if (bundleData?.fixedPrice) {
+        await updateDoc(bundleDocRef, { stock: parseInt(stock[0]) });
+      }
+      else {
+        await updateDoc(bundleDocRef, { price: sum, stock: parseInt(stock[0]) });
+      }
+    }
+    setPrice();
+  }, [addproductToBundle]);
   return (
     <div className='bundleContent'>
-      <div className="bundleContentDropDown"  ref={ref}>
+      <div className="bundleContentDropDown" ref={ref}>
         <p>Add bundle product</p>
-        <Input onClick={() => { setShowOptions(true) }} size="large" placeholder="Search" style={{ borderRadius: '7px' }} prefix={<SearchOutlined className='searchIcon' />} />        
-          <div className={`dropdownOption ${showOptions ? 'activated' : ''}`}>
-            <div className='showingOptions'>
-              <p>Showing 1-{data.length} of {data.length}</p>
-              {
-                data.length === 0 && <Spin size='large' />
-              }
-            </div>
+        <Input onChange={(e) => setSearch(e.target.value)} onClick={() => { setShowOptions(true) }} size="large" placeholder="Search" style={{ borderRadius: '7px' }} prefix={<SearchOutlined className='searchIcon' />} />
+        <div className={`dropdownOption ${showOptions ? 'activated' : ''}`}>
+          <div className='showingOptions'>
+            <p>Showing 1-{data.length} of {data.length}</p>
             {
-              data.map((product, index) => {
+              data.length === 0 && <Spin size='large' />
+            }
+          </div>
+          {
+            filterData.length > 0 ?
+              filterData.map((product, index) => {
                 const { product_name, imageUrl } = product;
                 return (
                   <div className='options' key={index} onClick={() => handleAddToBundle(product)}>
@@ -136,11 +188,13 @@ useEffect(()=> {
                   </div>
                 )
               })
-            }
-          </div>        
+              :
+              <p>No data found</p>
+          }
+        </div>
       </div>
       {
-        addproductToBundle.length > 0 || loading?
+        addproductToBundle.length > 0 || loading ?
           <div className="addproductToBundle">
             <Table
               loading={loading}
@@ -151,11 +205,9 @@ useEffect(()=> {
               }}
               components={{
                 body: {
-                    //wrapper: DraggableContainer,
-                    //row: DraggableBodyRow,
-                    cell: CustomCell,
+                  cell: CustomCell,
                 },
-            }}
+              }}
             >
               {
                 columns.map(({ key, dataIndex, title, render, width }) => <Column
@@ -166,18 +218,20 @@ useEffect(()=> {
                   render={render}
                   onCell={
                     (record) => ({
-                        handleQuantity,
-                        BundlesId,                        
-                        record,
-                        dataIndex                        
+                      handleQuantity,
+                      BundlesId,
+                      record,
+                      dataIndex,
+                      addproductToBundle,
+                      setAddproductToBundle
                     })
-                }
+                  }
                 />)
               }
               <Column
                 key={6}
                 title={''}
-                dataIndex={'product_details'}
+                dataIndex='product_details'
                 width={100}
                 render={(_, record) => (
                   <>

@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Spin, Table } from 'antd';
-import { columns } from './tableHelper';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import { db } from '../../../Firebasefunctions/db';
+import { columns, items } from './tableHelper';
 import './AllOrder.css';
 import TableCells from './TableCells';
 import { useContext } from 'react';
 import { AllOrderDataProvder } from '../../../context/AllOrderDataContext';
-
+import Menu from "../../../components/Menu"
 
 const { Column } = Table;
 
 const AllOrders = ({ activeKey }) => {
-    const [data, setData] = useContext(AllOrderDataProvder)
+    const [data] = useContext(AllOrderDataProvder)
     const [loading, setLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -28,18 +26,15 @@ const AllOrders = ({ activeKey }) => {
     const handleSelectAll = () => {
         data.map(({ key }) => setSelectedRowKeys((curr) => [key, ...curr]))
     }
-
-    const ordersCollectionsRef = collection(db, "orders_collections");
+const [dataSource, setDataSource] = useState([])
     useEffect(() => {
         setLoading(true);
         const getData = async () => {
             try {
-                const q = query(ordersCollectionsRef, orderBy("orderNumber", 'desc'));
-                const querySnapshot = await getDocs(q);
-                const data = querySnapshot.docs.map((doc) => {
-                    const { name, firstName, lastName, rentalPeriod, orderNumber, status, price, amount, secuirityDeposit } = doc.data();
+                const datasource = data.map((doc) => {
+                    const { name, firstName, lastName, rentalPeriod, orderNumber, status, price, amount, secuirityDeposit, key } = doc;
                     return {
-                        key: doc.id,
+                        key,
                         orderNumber,
                         name: <span><div className="avatar">
                             {
@@ -59,7 +54,7 @@ const AllOrders = ({ activeKey }) => {
                         secuirityDeposit: secuirityDeposit ? secuirityDeposit : 0
                     }
                 });
-                setData(data);
+                setDataSource(datasource);
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -67,18 +62,23 @@ const AllOrders = ({ activeKey }) => {
             }
         }
         getData();
-    }, []);
+    }, [data]);
 
     const filterData = useMemo(() => {
         if (activeKey === 'all') {
-            return data;
+            const filter = dataSource.filter((item) => !(item.status === "archived"))
+            return filter;
+        }
+        if (activeKey === 'archived') {
+            const filter = dataSource.filter((item) => item.status === "archived")
+            return filter;
         }
         if (activeKey === 'upcoming') {
-            const filter = data.filter((item) => item.status === "Reserved" || item.status === "Mixed")
+            const filter = dataSource.filter((item) => item.status === "Reserved" || item.status === "Mixed")
             return filter;
         }
         if (activeKey === 'late') {
-            const filter = data.filter((item) => {
+            const filter = dataSource.filter((item) => {
                 if (item.return === "No date") {
                     return false
                 }
@@ -89,7 +89,7 @@ const AllOrders = ({ activeKey }) => {
             })
             return filter;
         }
-    }, [activeKey, data]);
+    }, [activeKey, dataSource]);
 
     return (
         <div>
@@ -99,7 +99,7 @@ const AllOrders = ({ activeKey }) => {
                         <Spin />
                     </div>
                     :
-                    data.length === 0 ?
+                    dataSource.length === 0 ?
                         filterData.length === 0 ?
                             <div className='addCustomer'>
                                 <h1>No results found for the selected filters</h1>
@@ -113,14 +113,14 @@ const AllOrders = ({ activeKey }) => {
                         :
                         <div>
                             <div className='head_table'>
-                                {/* <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
+                                <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
                                 <p>{selectedRowKeys.length} products selected</p>
                                 {
                                     selectedRowKeys.length === 0 ?
                                         <p onClick={handleSelectAll}>Select all {data.length} products</p>
                                         :
                                         <p onClick={() => setSelectedRowKeys([])}>Clear selection</p>
-                                } */}
+                                }
                             </div>
                             <Table
                                 className='ordertable'

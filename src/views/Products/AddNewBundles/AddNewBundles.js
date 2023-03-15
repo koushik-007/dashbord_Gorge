@@ -42,7 +42,11 @@ const AddNewBundles = () => {
       imageUrl: url,
       imageName: imageUpload.name,
       discountable: true,
-      taxProfile: 'noTaxProfile'
+      taxProfile: 'noTaxProfile',
+      stock: 0, 
+      pickedUp: 0,
+      price: 0,
+      fixedPrice: false
     });
     navigate('/bundles/details/'+res.id + '/content');
     setLoading(false)

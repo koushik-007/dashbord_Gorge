@@ -1,26 +1,24 @@
 import { Spin, Table } from 'antd';
-import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { db } from '../../../Firebasefunctions/db';
+import { useContext } from 'react';
+import { AllOrderDataProvder } from '../../../context/AllOrderDataContext';
 import { columns } from '../../Orders/AllOrders/tableHelper';
 import TableCells from './TableCells';
 
 const { Column } = Table;
 
 const CustomerOrder = ({customerId}) => {
+    const [data] = useContext(AllOrderDataProvder)
     const [loading, setLoading] = useState(false);
-    const ordersCollectionsRef = collection(db, "orders_collections");
-    const [data, setData] = useState([]);
+    const [dataSource, setDataSource] = useState([]);
     useEffect(() => {
         setLoading(true);
         const getData = async () => {
             try {
-                const q = query(ordersCollectionsRef, where("customerId", "==", customerId));
-                const querySnapshot = await getDocs(q);
-                const data = querySnapshot.docs.map((doc, index) => {
-                    const {rentalPeriod, status, price, amount, secuirityDeposit } = doc.data();
+                const filterData = data.filter((item) => item.customerId === customerId).map((doc, index) => {
+                    const {rentalPeriod, status, price, amount, secuirityDeposit, key } = doc;
                     return {
-                        key: doc.id,
+                        key,
                         orderNumber: index + 1,                        
                         status: status && status,
                         pickup: rentalPeriod?.length > 0 ? rentalPeriod[0] : 'No date',
@@ -29,8 +27,8 @@ const CustomerOrder = ({customerId}) => {
                         amount,
                         secuirityDeposit: secuirityDeposit ? secuirityDeposit : 0
                     }
-                });
-                setData(data);
+                });               
+                setDataSource(filterData)
                 setLoading(false);
             } catch (error) {
                 setLoading(false);
@@ -40,7 +38,7 @@ const CustomerOrder = ({customerId}) => {
        if (customerId) {
         getData();
        }
-    }, [customerId]);
+    }, [customerId, data]);
     return (
         <div>
             {
@@ -49,7 +47,7 @@ const CustomerOrder = ({customerId}) => {
                         <Spin />
                     </div>
                     :
-                    data.length === 0 ?
+                    dataSource.length === 0 ?
                             <div className='addCustomer'>
                                 <h1>No orders found for this customer</h1>                                
                             </div>
@@ -60,7 +58,7 @@ const CustomerOrder = ({customerId}) => {
                                 size='middle'
                                 bordered
                                 loading={loading}
-                                dataSource={data}
+                                dataSource={dataSource}
                                 components={{
                                     body: {
                                         cell: TableCells,

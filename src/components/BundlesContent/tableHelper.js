@@ -4,6 +4,7 @@ import { collection, doc, updateDoc } from 'firebase/firestore';
 import { db, getAllData } from '../../Firebasefunctions/db';
 import { useEffect, useState } from 'react';
 import Variants from '../Variants/Variants';
+import { useDebounce } from '../../customhook/debounce';
 const { Option } = Select;
 
 export const columns = [
@@ -52,7 +53,7 @@ export const columns = [
   },
 ]
 
-export const CustomCell = ({ record, handleQuantity, dataIndex, BundlesId, children, ...restProps }) => {
+export const CustomCell = ({ record, handleQuantity, dataIndex, BundlesId, children, addproductToBundle,setAddproductToBundle, ...restProps }) => {
 
 
   // const handleAddStock = async (variationKey, quantity) => {
@@ -102,10 +103,24 @@ export const CustomCell = ({ record, handleQuantity, dataIndex, BundlesId, child
   }
   const handleSelectVariation = async (value, id) => {
     setLoading(true);
-    const bundlesProDocRef = doc(db, "bundles_collections", BundlesId, "product_collections", id);
-    await updateDoc(bundlesProDocRef, { variation: value });
+    const newData = [...addproductToBundle];
+    const index = newData.findIndex((item) => id === item.id);
+    if (index > -1) {
+      const item = newData[index];
+      newData.splice(index, 1, { ...item, variation: value });
+      const bundlesProDocRef = doc(db, "bundles_collections", BundlesId, "product_collections", id);
+      await updateDoc(bundlesProDocRef, { variation: value });
+      setAddproductToBundle(newData);
+    }    
     setLoading(false)
   }
+  const [changesQuantity, setChangeQuantity] = useState(0);
+  const debounceValue = useDebounce(changesQuantity, 300);
+  useEffect(() => {
+    if (debounceValue) {
+      handleQuantity(debounceValue, record.id)
+    }
+  }, [debounceValue])
   if (dataIndex === "quantity") {
     return <td {...restProps}>
       <span className='bundleQuantity'>
@@ -113,13 +128,13 @@ export const CustomCell = ({ record, handleQuantity, dataIndex, BundlesId, child
           min={0}
           size='large'
           defaultValue={record.quantity}
-          onChange={(value) => handleQuantity(value, record.id)}
+          onChange={(value) => setChangeQuantity(value)}
           controls={{ upIcon: <PlusOutlined />, downIcon: <MinusOutlined /> }}
         />
       </span>
     </td>
   }
-  if (variationData.length > 1 && dataIndex === "variation") {
+  if (dataIndex === "variation") {
     return (
       <td {...restProps}>
         <Select size="large"

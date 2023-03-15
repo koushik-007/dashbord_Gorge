@@ -22,16 +22,17 @@ const columns = [
     },
     {
         title: 'Name',
-        dataIndex: 'product_name',
-        render: (name, record) => {
-            const { product_name, quantity, imageUrl, pickedUp, price, stock, key, ...rest } = record;
-            return <div className='packing_slip_table_image'>
-                <div> {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}</div>
-                <div>
-                    {name} - <Variants data={rest} />
-                </div>
-            </div>
-        }
+        dataIndex: 'product',
+        width: 400
+        // render: (name, record) => {
+        //     const { product_name, quantity, imageUrl, pickedUp, price, stock, key, ...rest } = record;
+        //     return <div className='packing_slip_table_image'>
+        //         <div> {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}</div>
+        //         <div>
+        //             {name} - <Variants data={rest} />
+        //         </div>
+        //     </div>
+        // }
     },
 ];
 
@@ -41,9 +42,10 @@ const PackingSlip = () => {
     const [loading, setLoading] = useState(false);
     const [orderData, setOrderData] = useState({});
     const [productsData, setProductsData] = useState([]);
+    const [bundlesData, setBundleData] = useState([]);
     const orderRef = doc(db, "orders_collections", orderId);
     const orderProductRef = collection(db, "orders_collections", orderId, "products");
-
+    const orderBundleRef = collection(db, "orders_collections", orderId, "bundles");
     const getOrderData = async () => {
         setLoading(true)
         const data = await getAData(orderRef);
@@ -53,8 +55,40 @@ const PackingSlip = () => {
             const { quantity, imageUrl, key } = obj;
             const varaition = doc(db, "product_collections", obj.productId, "variations", obj.variationId);
             const varaitionData = await getAData(varaition);
-            setProductsData((curr) => ([...curr, { ...varaitionData, imageUrl, quantity, key }]));
+            const { product_name, pickedUp, price, stock, dayCount, ...rest } = varaitionData;
+            setProductsData((curr) => ([...curr,
+            {
+                quantity,
+                key,
+                product: <div className='packing_slip_table_image'>
+                    <div> {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}</div>
+                    <div>
+                        {product_name} - <Variants data={rest} />
+                    </div>
+                </div>
+
+            }]));
         });
+        const orderBundles = await getAllData(orderBundleRef);
+        orderBundles.forEach(async (item) => {
+            const { bundleId, quantity, key } = item;
+            const bundleDocRef = doc(db, "bundles_collections", bundleId);
+            const bundleData = await getAData(bundleDocRef);
+            const { bundleName, imageUrl } = bundleData;
+            setBundleData((curr) => ([...curr,
+            {
+                quantity,
+                key,
+                product: <div className='packing_slip_table_image'>
+                    <div> {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}</div>
+                    <div>
+                        {bundleName}
+                    </div>
+                </div>
+
+            }
+            ]));
+        })
         setLoading(false);
     }
     useEffect(() => {
@@ -70,7 +104,7 @@ const PackingSlip = () => {
         return componentRef.current;
     }, [componentRef.current]);
 
-   
+
 
     if (Object.keys(orderData).length > 0) {
         return <>
@@ -149,6 +183,18 @@ const PackingSlip = () => {
                                         dataSource={productsData}
                                         columns={columns}
                                     />
+                                    {
+                                        bundlesData.length > 0 ?
+                                            <Table
+                                                showHeader={false}
+                                                loading={loading}
+                                                pagination={false}
+                                                dataSource={bundlesData}
+                                                columns={columns}
+                                            />
+                                            :
+                                            null
+                                    }
                                 </Col>
                             </Row>
                         </div>

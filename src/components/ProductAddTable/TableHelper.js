@@ -1,8 +1,11 @@
-import { Button, Form, Input, Skeleton, Tooltip } from "antd";
-import { DashOutlined, MenuOutlined, SaveOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber, Skeleton, Tooltip } from "antd";
+import { DashOutlined, MenuOutlined, SaveOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import { SortableHandle } from 'react-sortable-hoc';
 import { FaRegDotCircle } from 'react-icons/fa'
 import Variants from "../Variants/Variants";
+import { useState } from "react";
+import { useDebounce } from "../../customhook/debounce";
+import { useEffect } from "react";
 
 const DragHandle = SortableHandle(() => (
   <MenuOutlined
@@ -22,7 +25,7 @@ export const columns = [
   },
   {
     title: '',
-    dataIndex: 'imgage',
+    dataIndex: 'image',
     className: 'product-image drag-visible',
     width: 30,
     render: (imgUrl, record) => {
@@ -80,8 +83,32 @@ export const EditableCell = ({
   setEditingKey,
   handleCustomCharges,
   loading,
+  requireId,
+  handleQuantity,
+  quantity,
   ...restProps
 }) => {
+      const [changesQuantity, setChangeQuantity] = useState(0);
+  const debounceValue = useDebounce(changesQuantity, 300);
+  useEffect(() => {
+    if (debounceValue) {
+      handleQuantity(debounceValue, requireId)
+    }
+  }, [debounceValue])
+  if (dataIndex === "quantity") {
+    return <td {...restProps}>
+    <span key={record.key} className="quantityInput">
+          <InputNumber
+              min={1}
+              size='large'
+              disabled={record.status === "returned" || record.status === "Picked up" || record.stock - record.rest.pickedUp === 0}
+              defaultValue={quantity}
+              onChange={(value) => setChangeQuantity(value)}
+              controls={{ upIcon: <PlusOutlined />, downIcon: <MinusOutlined /> }}
+          />
+      </span>
+      </td>
+  }
   return (
     <td {...restProps}>
       {editing ? (
@@ -110,7 +137,7 @@ export const EditableCell = ({
           >
             <Input size="large" placeholder="price" />
           </Form.Item>
-          <Button loading={loading} className="chargeEdit" onClick={() => handleCustomCharges(record.orderProductsId)} icon={<SaveOutlined />} size='large' />
+          <Button loading={loading} className="chargeEdit" onClick={() => handleCustomCharges(requireId)} icon={<SaveOutlined />} size='large' />
         </span>
       ) : (
         children

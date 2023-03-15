@@ -1,23 +1,15 @@
-import { ArrowRightOutlined, CreditCardOutlined, PlusOutlined } from '@ant-design/icons';
-import { FaRegPaperPlane } from 'react-icons/fa';
+import { ArrowRightOutlined, PlusOutlined } from '@ant-design/icons';
+
 
 export const items = [
   {
     key: '1',
-    title: 'Edit products',
+    title: 'Archive',
   },
   {
     key: '2',
-    title: 'Edit tags'
-  },
-  {
-    key: '3',
-    title: 'Edit categories'
-  },
-  {
-    key: '4',
-    title: 'Generate barcodes'
-  }
+    title: 'Download packing slip'
+  },  
 ];
 export const columns = [
   {
@@ -38,7 +30,7 @@ export const columns = [
     width: 130,
     clssName: 'status',
     render: (text) => {
-      return <button className={ text.toLowerCase().split(" ")[0] } >{text}</button>
+      return <button className={text.toLowerCase().split(" ")[0] } >{text}</button>
     }
   },
   {

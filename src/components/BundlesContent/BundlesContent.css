@@ -1,18 +1,20 @@
-.bundleContent{
+.bundleContent {
     background: white;
     padding: 1rem;
     border-radius: 10px;
     border: 2px solid rgb(228, 228, 228);
 }
+
 .bundleContentDropDown {
     position: relative;
 }
-.bundleContentDropDown p{
+
+.bundleContentDropDown p {
     font-weight: 500 !important;
     margin-bottom: 7px;
 }
 
-.dropdownOption{
+.dropdownOption {
     position: absolute;
     width: 100%;
     padding: 2rem 1rem;
@@ -21,32 +23,55 @@
     background-color: white;
     display: none;
 }
-.activated{
+
+.activated {
     display: block;
 }
-.showingOptions{
+
+.showingOptions {
     display: flex;
     justify-content: space-between;
 }
-.dropdownOption p{
+
+.dropdownOption p {
     font-weight: 600;
     font-size: small;
     margin-bottom: 1.6rem;
 }
-.dropdownOption .options{
+
+.dropdownOption .ant-collapse-content-box {
+    flex-direction: column;
+}
+
+.productDropdown{
+    height: 25rem;
+    overflow-y: scroll;
+}
+.productDropdown::-webkit-scrollbar {
+    width: 4px;
+    height: 6px;
+  }
+  .productDropdown::-webkit-scrollbar-track {
+    background: #dddadd;
+  }
+  .productDropdown::-webkit-scrollbar-thumb {
+    background: #df8888;
+  }
+
+.dropdownOption .options {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0 auto;
     padding: 1rem 1.2rem;
     border-top: 1px solid rgb(208, 207, 207);
     cursor: pointer;
 }
-.dropdownOption .options:hover{
+
+.dropdownOption .options:hover {
     background-color: #f0f2f5 !important;
 }
 
-.dropdownOption .addOptionBtn button{
+.dropdownOption .addOptionBtn button {
     color: white;
     font-weight: 600;
     font-size: small;
@@ -56,12 +81,14 @@
     border-radius: 7px;
     padding: 3px 1rem;
 }
-.bundleContent .optionImg{
+
+.bundleContent .optionImg {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
-.emptyBox{
+
+.emptyBox {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -69,20 +96,25 @@
     height: 35vh;
     text-align: center;
 }
-.emptyBox svg{
+
+.emptyBox svg {
     font-size: 4rem;
 }
-.addproductToBundle{
+
+.addproductToBundle {
     padding-top: 1rem;
 }
-.addTobundleTr{
+
+.addTobundleTr {
     display: flex;
     align-items: center;
 }
-.addTobundleTr img{
+
+.addTobundleTr img {
     width: 40px;
     margin-right: 6px;
 }
+
 .bundleQuantity .ant-input-number-handler-wrap {
     opacity: 1;
 }

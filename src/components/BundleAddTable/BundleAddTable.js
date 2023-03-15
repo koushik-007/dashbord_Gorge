@@ -1,68 +1,17 @@
-import React, { useState, memo, useMemo } from 'react';
-import { Button, Form, Table } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
-import { columns, EditableCell } from './TableHelper';
-import { ChargeColumn } from './Columns';
+import React from 'react';
+import { Button, Form, InputNumber, Table } from 'antd';
+import { PlusOutlined, MinusOutlined, CloseOutlined } from "@ant-design/icons";
+import { useMemo } from 'react';
+import { columns } from './Tablehelper';
+import { ChargeColumn } from '../ProductAddTable/Columns';
+import { useState } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../Firebasefunctions/db';
-import "./ProductDetails.css";
-// import { arrayMoveImmutable } from 'array-move';
-// import { SortableContainer, SortableElement } from 'react-sortable-hoc';
+import { EditableCell } from '../ProductAddTable/TableHelper';
 
 const { Column } = Table;
 
-const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, loadingProductTable, orderId, pickupNReturnDate }) => {
-    // const SortableItem = SortableElement((props) => <tr {...props} />);
-    // const SortableBody = SortableContainer((props) => <tbody {...props} />);
-    // const onSortEnd = ({ oldIndex, newIndex }) => {
-    //     if (oldIndex !== newIndex) {
-    //         const newData = arrayMoveImmutable(productsData.slice(), oldIndex, newIndex).filter(
-    //             (el) => !!el,
-    //         );
-    //         console.log('Sorted items: ', newData);
-    //         setProductsData(newData);
-    //     }
-    // };
-
-    // const DraggableContainer = (props) => (
-    //     <SortableBody
-    //         useDragHandle
-    //         disableAutoscroll
-    //         helperclassname="row-dragging"
-    //         onSortEnd={onSortEnd}
-    //         {...props}
-    //     />
-    // );
-
-    // const DraggableBodyRow = ({ className, style, ...restProps }) => {
-    //     const index = productsData.findIndex((x) => x.index === restProps['data-row-key']);
-    //     return <SortableItem key={index} index={index} {...restProps} />;
-    // };
-
-    
-    const dataSourceLocal = useMemo(() => {
-        const localReload = productsData.map((data, index) => {
-            const { product_name, imageUrl, price, id, quantity, charge, orderProductsId, dayCount, status,stock, ...rest } = data;
-            return {
-                key: index,
-                image: imageUrl,
-                product_details: product_name,
-                quantity,
-                dayCount,
-                product_price: price,
-                charge,
-                productsId: id,
-                pickupNReturnDate,
-                status,
-                orderProductsId,
-                stock,
-                rest
-            }
-        });
-        return localReload;
-    }, [productsData, pickupNReturnDate])
-
-
+const BundleAddTable = ({loadingBundleTable, bundleData, pickupNReturnDate, handleDeleteBundle, setBundleData, orderId}) => {
     const [form] = Form.useForm();
     const [editingKey, setEditingKey] = useState('');
     const [customChargesLoading, setCustomChargesLoading] = useState(false)
@@ -71,22 +20,42 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
         form.setFieldsValue(record);
         setEditingKey(record.key);
     };
-
+    const dataSourceLocal = useMemo(() => {
+        const localReload = bundleData.map((data, index) => {
+            const { bundleName, imageUrl, price, bundleId, quantity, charge, orderBundleId, dayCount, status,stock, ...rest } = data;
+            return {
+                key: index,
+                image: imageUrl,
+                bundleName,
+                quantity,
+                dayCount,
+                price,
+                charge,
+                bundleId,
+                pickupNReturnDate,
+                status,
+                orderBundleId,
+                stock,
+                rest
+            }
+        });
+        return localReload;
+    }, [bundleData, pickupNReturnDate]);
     const handleProductUpdates = async (id, data) => {
-        const productDocRef = doc(db, "orders_collections", orderId, "products", id);
+        const productDocRef = doc(db, "orders_collections", orderId, "bundles", id);
         await updateDoc(productDocRef, data);
     };
     const handleCustomCharges = async (key) => {
         try {
             setCustomChargesLoading(true);
             const row = await form.validateFields();
-            const newData = [...productsData];
-            const index = newData.findIndex((item) => key === item.orderProductsId);
+            const newData = [...bundleData];
+            const index = newData.findIndex((item) => key === item.orderBundleId);
 
             if (index > -1) {
                 const item = newData[index];
                 newData.splice(index, 1, { ...item, ...row });
-                setProductsData(newData);
+                setBundleData(newData);
                 if (orderId) {
                     await handleProductUpdates(key, row)
                 }
@@ -100,38 +69,38 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
     };
 
     const handleCharges = async (day, key, price) => {
-        const newData = [...productsData];
-        const index = newData.findIndex((item) => key === item.orderProductsId);
+        const newData = [...bundleData];
+        const index = newData.findIndex((item) => key === item.orderBundleId);
         if (index > -1) {
             const item = newData[index];
             newData.splice(index, 1, { ...item, dayCount: day, charge: day * price });
-            setProductsData(newData);
+            setBundleData(newData);
             setEditingKey('');
             if (orderId) {
                 await handleProductUpdates(key, { dayCount: day, charge: day * price })
             }
         }
     }
-    const handleQuantity = async (value, key) => {
+    const handleQuantity = async (value, key) => {        
         if (value < 1) {
             return;
         }
-        const newData = [...productsData];
-        const index = newData.findIndex((item) => key === item.orderProductsId);
+        const newData = [...bundleData];
+        const index = newData.findIndex((item) => key === item.orderBundleId);
         if (index > -1) {
             const item = newData[index];
             newData.splice(index, 1, { ...item, quantity: value });
-            setProductsData(newData);
+            setBundleData(newData);
             if (orderId) {
                 await handleProductUpdates(key, { quantity: value })
             }
         }
     }
-
     return (
         <Form form={form} component={false}>
             <Table
-                loading={loadingProductTable}
+                showHeader={false}
+                loading={loadingBundleTable}
                 pagination={false}
                 dataSource={dataSourceLocal}
                 rowKey="index"
@@ -164,9 +133,9 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
                             quantity: record.quantity,
                             dataIndex: "quantity",
                             record,
-                            requireId: record.orderProductsId
+                            requireId: record.orderBundleId
                         })
-                    }                    
+                    }  
                 />
                 <Column
                     title="Charge"
@@ -175,7 +144,7 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
                     width={150}
                     className='drag-visible'
                     render={(charge, record) => {
-                        return <ChargeColumn key={record.key} handleCharges={handleCharges} record={record} price={record.product_price} requireId={record.orderProductsId} charge={charge} edit={edit} />
+                        return <ChargeColumn key={record.key} handleCharges={handleCharges} record={record} charge={charge} requireId={record.orderBundleId} price={record.price} edit={edit} />
                     }}
                     onCell={
                         (record) => ({
@@ -186,7 +155,7 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
                             title: 'charge',
                             editing: isEditing(record),
                             loading: customChargesLoading,
-                            requireId: record.orderProductsId
+                            requireId: record.orderBundleId
                         })
                     }
                 />
@@ -207,10 +176,10 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
                     className='drag-visible'
                     width={60}
                     render={(_, record) => {
-                        return <Button 
+                        return <Button
                         key={record.key}
                          danger 
-                         onClick={() => handleDeleteProduct(record)} icon={<CloseOutlined />} 
+                         onClick={() => handleDeleteBundle(record)} icon={<CloseOutlined />} 
                          disabled={record.status === "returned" || record.status === "Picked up"}
                          />
                     }}
@@ -220,4 +189,4 @@ const ProductAddTable = ({ productsData, setProductsData, handleDeleteProduct, l
     );
 };
 
-export default memo(ProductAddTable);
+export default BundleAddTable;

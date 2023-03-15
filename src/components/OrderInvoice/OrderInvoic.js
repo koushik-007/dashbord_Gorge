@@ -6,23 +6,27 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../Firebasefunctions/db';
 import { PriceContextProvider } from '../../context/PriceContext';
 
-const OrderInvoic = ({ productsData, orderId }) => {
+const OrderInvoic = ({ productsData, orderId, bundleData }) => {
   const {setPrice} = useContext(PriceContextProvider);
   const [showDropdown, setShowDropdown] = useState(false);
   const [total, setToal] = useState(0);
+  
   useEffect(() => {
     const subTotal = async () => {
       const charges = productsData.map(data => parseFloat(data.charge) * parseFloat(data.quantity));
-      var total = charges.reduce((a, b) => a + b, 0);
-      setToal(total);
-      setPrice(total);
+      const total = charges.reduce((a, b) => a + b, 0);
+      const bundlecharges = bundleData.map(data => parseFloat(data.charge) * parseFloat(data.quantity));
+      const bundletotal = bundlecharges.reduce((a, b) => a + b, 0);
+       
+      setToal(total + bundletotal);
+      setPrice(total + bundletotal);
       if (orderId) {
         const orderDocRef = doc(db, "orders_collections", orderId);
-        await updateDoc(orderDocRef, { price: total })
+        await updateDoc(orderDocRef, { price: total + bundletotal })
       }
     }
     subTotal();
-  }, [productsData]);
+  }, [productsData, orderId]);
   return (
     <Row>
       <Col lg={12} xs={24}>

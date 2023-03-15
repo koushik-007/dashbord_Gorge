@@ -2,7 +2,7 @@ import { Button, Popover } from "antd"
 import { useState } from "react";
 import { DownOutlined, EditOutlined } from '@ant-design/icons';
 
-export const ChargeColumn = ({ handleCharges, record, charge, edit }) => {
+export const ChargeColumn = ({ handleCharges, record, charge, edit, price, requireId }) => {
     const [open, setOpen] = useState(false);
     const hide = () => {
         setOpen(false);
@@ -19,9 +19,9 @@ export const ChargeColumn = ({ handleCharges, record, charge, edit }) => {
                 overlayClassName='chargeBtnPop'
                 content={
                     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((day) => (
-                        <div className='chargeOptions' key={day} onClick={() => {handleCharges(day, record.orderProductsId, record.product_price); setOpen(false)}}>
+                        <div className='chargeOptions' key={day} onClick={() => {handleCharges(day, requireId, price); setOpen(false)}}>
                             <span>{day} {day === 1 ? 'day' : 'days'}</span>
-                            <span>{day * record.product_price}</span>
+                            <span>{day * price}</span>
                         </div>
                     ))
                 }
