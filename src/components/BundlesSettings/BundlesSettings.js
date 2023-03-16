@@ -3,8 +3,8 @@ import { Button, Col, Form, Input, message, Row, Upload } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { UploadedImg } from '../UploadCustom/UploadCustom';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { db, storage } from '../../Firebasefunctions/db';
-import { collection, doc, updateDoc } from 'firebase/firestore';
+import { db, deleteDocument, getAllData, storage } from '../../Firebasefunctions/db';
+import { collection, doc, query, updateDoc, where } from 'firebase/firestore';
 import CustomSpinner from '../CustomSpinner/CustomSpinner';
 
 
@@ -18,7 +18,7 @@ const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
     const [imageLoading, setImageLoading] = useState(false);
     const bundlesDocRef = doc(db, "bundles_collections", BundlesId);
     const onFinish = async (values) => {
-        setLoading(true);        
+        setLoading(true);
         await updateDoc(bundlesDocRef, values);
         setLoading(false);
         setIsDisabled(true);
@@ -32,7 +32,42 @@ const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
     }
     const ordersCollectionRef = collection(db, "orders_collections");
     const handleDelete = async () => {
-        
+        setDeleteLoading(true);
+        const orderData = await getAllData(ordersCollectionRef);
+        let result = [];
+        for (let i = 0; i < orderData.length; i++) {
+            const { id } = orderData[i];
+            const orderProducts = collection(db, "orders_collections", id, "bundles");
+            const q = query(orderProducts, where("bundleId", "==", BundlesId))
+            const querySnapshot = await getAllData(q);
+            result.push(...querySnapshot)
+        }
+        if (result.length > 0) {
+            setDeleteLoading(false);
+            return message.error("this bundle has been reserved/picked up so it can't delete now");
+        }
+        else {
+            const bundleProdutcs = collection(db, "bundles_collections", BundlesId, "product_collections");
+            const bundleProductData = await getAllData(bundleProdutcs);
+            for (let i = 0; i < bundleProductData.length; i++) {
+                const { id } = bundleProductData[i];
+                const orderProducts = doc(db, "bundles_collections", BundlesId, "product_collections", id);
+                await deleteDocument(orderProducts);
+            }
+            const productdoc = doc(db, "bundles_collections", BundlesId);
+            await deleteDocument(productdoc);
+            if (bundleData?.imageName) {
+                const desertRef = ref(storage, `images/${bundleData?.imageName}`);
+                deleteObject(desertRef).then(async (data) => {
+                    console.log(data)
+                }).catch((error) => {
+                    setImageLoading(false);
+                    message.error("Image is not removed")
+                });
+            }
+            setDeleteLoading(false);
+            navigate('/bundles')
+        }
     }
     const handleUploadImage = async ({ fileList }) => {
         if (fileList[0].originFileObj == null) return;
@@ -63,7 +98,7 @@ const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
         }).catch((error) => {
             setImageLoading(false);
             message.error("Image is not removed")
-        });        
+        });
     }
     return (
         <div className="parent-add-product">

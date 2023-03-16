@@ -296,7 +296,7 @@ const AddOrder = ({ oData }) => {
                   <div className="product-info">
                     <ProductSearch handleAddProductData={handleAddProductData} handleAddBundleData={handleAddBundleData} showProducts={showProducts} setShowProducts={setShowProducts} />
                     {
-                      productsData.length > 0 ?
+                      productsData.length > 0 || bundleData.length > 0 ?
                         <div className="product-details">
                           {
                             productsData.length > 0 &&
@@ -328,7 +328,7 @@ const AddOrder = ({ oData }) => {
                     }
                   </div>
                   <div className="product-invoice">
-                    <OrderInvoic productsData={productsData} />
+                    <OrderInvoic productsData={productsData} bundleData={bundleData}/>
                   </div>
                 </div>
               </Col>

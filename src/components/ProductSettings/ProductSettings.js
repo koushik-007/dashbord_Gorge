@@ -51,8 +51,7 @@ const ProductSettings = ({ product, productId, setProduct }) => {
             const querySnapshot = await getAllData(q);
             if (querySnapshot.length > 0) {
                 setDeleteLoading(false);
-                message.error("this prduct has been reserved/picked up so it can't delete now");
-                break;
+               return message.error("this product has been reserved/picked up so it can't delete now");                
             }
         }
         const productdoc = doc(db, "product_collections", productId);

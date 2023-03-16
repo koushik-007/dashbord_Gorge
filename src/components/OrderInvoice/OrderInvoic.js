@@ -26,7 +26,7 @@ const OrderInvoic = ({ productsData, orderId, bundleData }) => {
       }
     }
     subTotal();
-  }, [productsData, orderId]);
+  }, [productsData, bundleData]);
   return (
     <Row>
       <Col lg={12} xs={24}>
