@@ -31,11 +31,6 @@ const Bundle = ({ isModalVisible, setIsModalVisible, selectedProduct, dayCount, 
         setIsAddToCartLoading(false);
     }
 
-    // const variantsDestruct = (obj) => {
-    //     const { id, key, price, stock, pickedUp, productId, ...rest } = obj;
-    //     const variants = Object.keys(rest);
-    //     return variants.map((item) => rest[item])
-    // }
     return (
         <Modal
             destroyOnClose={true}

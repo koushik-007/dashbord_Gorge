@@ -10,7 +10,6 @@ export const CustomCell = ({ record, children, dataIndex,data, setData, productI
     const [loading, setLoading] = useState(false);
    
     const handleAddStock = async (variationKey, quantity) => {
-        console.log(variationKey);
         try {
             setLoading(true);
             const newData = [...data];

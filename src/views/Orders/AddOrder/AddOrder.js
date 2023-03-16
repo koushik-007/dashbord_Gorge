@@ -252,7 +252,7 @@ const AddOrder = ({ oData }) => {
               pickupNReturnDate.length > 0 ?
                 <>
                   {
-                    productsData.length > 0 ?
+                    productsData.length > 0 || bundleData.length > 0?
                       <div className='reserveNPickup'>
                         <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleCreateOrder('Reserved')}>Reserve</Button>
                         <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>

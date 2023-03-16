@@ -55,31 +55,6 @@ export const columns = [
 
 export const CustomCell = ({ record, handleQuantity, dataIndex, BundlesId, children, addproductToBundle,setAddproductToBundle, ...restProps }) => {
 
-
-  // const handleAddStock = async (variationKey, quantity) => {
-  //     console.log(variationKey);
-  //     try {
-  //         const newData = [...data];
-  //         const index = newData.findIndex((item) => variationKey === item.key);
-  //         if (index < 0) {
-  //             return
-  //         }
-  //         const item = newData[index];
-  //         const { stock, id, key, ...rest } = item;
-  //         const newObj = { ...rest, stock: parseFloat(stock ? stock : 0) + parseFloat(quantity) }
-  //         const variationDoc = doc(db, "product_collections", productId, 'variations', variationKey);
-  //         await editData(variationDoc, newObj);
-  //         newData.splice(index, 1, {...newObj, id, key});
-  //         //console.log(newData);
-  //         setData(newData)
-  //         setClicked(false);
-  //         setQuantity(0);
-  //         setLoading(false);
-  //     } catch (errInfo) {
-  //         setLoading(false);
-  //         console.log('Validate Failed:', errInfo);
-  //     }
-  // }
   const [variationData, setVariationData] = useState([])
   const [loading, setLoading] = useState(false);
   const getData = async () => {
