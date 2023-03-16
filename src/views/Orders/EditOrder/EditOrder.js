@@ -18,7 +18,6 @@ import moment from 'moment';
 import CustomSpinner from '../../../components/CustomSpinner/CustomSpinner';
 import "./EditOrder.css"
 import ProductShortageModal from '../../../components/OrderModals/ProductShortageModal';
-import ReturnModal from '../../../components/OrderModals/ReturnModal';
 import RightSideBar from '../../../components/RightSideBar/RightSideBar';
 import BundleAddTable from '../../../components/BundleAddTable/BundleAddTable';
 
@@ -100,7 +99,7 @@ const EditOrder = () => {
       setShortageProducts([...isShortage, ...isShortageBundle]);
       return seIsOpenShortageModal(true);
     }
-    
+
     else {
       await setOrderData((curr) => ({ ...curr, status }));
       await updateDoc(orderRef, { status });
@@ -197,41 +196,7 @@ const EditOrder = () => {
     setLoadingProductTable(false);
   };
 
-  const handlepickUp = async (selectedItems, stat) => {
-    const isShortage = productsData.filter((data) => data.stock - data.quantity < 0);
-    if (isShortage.length > 0) {
-      setShortageProducts(isShortage);
-      return seIsOpenShortageModal(true);
-    }
-    else {
-      setPickupLoading(true);
-      setLoadingProductTable(true);
-      for (let i = 0; i < productsData.length; i++) {
-        const { orderProductsId, variationId, productId, quantity } = productsData[i];
-        const productDocRef = doc(db, "orders_collections", orderId, "products", orderProductsId);
-
-        if (selectedItems.includes(orderProductsId)) {
-          await updateDoc(productDocRef, { status: stat })
-          if (stat === "Picked up") {
-            const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-            const data = await getAData(variationDoc);
-            await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
-          }
-          if (stat === "returned") {
-            const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-            const data = await getAData(variationDoc);
-            await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) - parseFloat(quantity) });
-          }
-        }
-      }
-      setProductsData([]);
-      getOrderData()
-      setLoadingProductTable(false);
-      setPickupLoading(false);
-      setShowPickupModal(false);
-      setShowReturnModal(false);
-    }
-  }
+  
   const [items, setItems] = useState(0);
 
   const calculateItems = (data, bundleData) => {
@@ -307,20 +272,20 @@ const EditOrder = () => {
                         <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleorderStatus('Reserved')}>Reserve</Button>
                       }
                       {
-                        productsData.length > 0 && productsData.filter(({ status }) => status !== "Picked up" && status !== "returned").length > 0 ?
+                        productsData.length > 0 || bundleData.length > 0 ?
+                        productsData.filter(({ status }) => status === "Reserved").length > 0 || bundleData.filter(({ status }) => status === "Reserved").length > 0 ?
                           <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
+                          :
+                          null
                           :
                           null
                       }
                       {
-                        bundleData.length > 0 && bundleData.filter(({ status }) => status !== "Picked up" && status !== "returned").length > 0 ?
-                          <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
-                          :
-                          null
-                      }
-                      {
-                        productsData.length > 0 && productsData.filter(({ status }) => status === "Picked up").length > 0 ?
-                          <Button icon={<FaLevelUpAlt />} type='primary' size='large' style={{ background: 'rgb(116, 204, 32)' }} onClick={() => setShowReturnModal(true)}>Return items</Button>
+                        productsData.length > 0 || bundleData.length > 0 ?
+                          productsData.filter(({ status }) => status === "Picked up").length > 0 || bundleData.filter(({ status }) => status === "Picked up").length > 0 ?
+                            <Button icon={<FaLevelUpAlt />} type='primary' size='large' style={{ background: 'rgb(116, 204, 32)' }} onClick={() => setShowReturnModal(true)}>Return items</Button>
+                            :
+                            null
                           :
                           null
                       }
@@ -441,10 +406,10 @@ const EditOrder = () => {
               setIsShowModal={seIsOpenShortageModal}
               dataSource={shortageProducts}
             />
-            <PickupModal
+            <PickupModal              
               showPickupModal={showPickupModal}
               setShowPickupModal={setShowPickupModal}
-              productsData={productsData.filter(({ status }) => status !== "Picked up" && status !== "returned")}              
+              productsData={productsData.filter(({ status }) => status !== "Picked up" && status !== "returned")}
               pickupLoading={pickupLoading}
               bundleData={bundleData.filter(({ status }) => status !== "Picked up" && status !== "returned")}
               orderId={orderId}
@@ -453,12 +418,18 @@ const EditOrder = () => {
               getOrderData={getOrderData}
               setLoadingProductTable={setLoadingProductTable}
             />
-            <ReturnModal
-              showReturnModal={showReturnModal}
-              setShowReturnModal={setShowReturnModal}
+            <PickupModal
+              isReturn={true}              
+              showPickupModal={showReturnModal}
+              setShowPickupModal={setShowReturnModal}
               productsData={productsData.filter(({ status }) => status === "Picked up")}
-              handleReturn={handlepickUp}
-            // returnLoading={returnLoading}
+              pickupLoading={pickupLoading}
+              bundleData={bundleData.filter(({ status }) => status === "Picked up")}
+              orderId={orderId}
+              setBundleData={setBundleData}
+              setProductsData={setProductsData}
+              getOrderData={getOrderData}
+              setLoadingProductTable={setLoadingProductTable}
             />
           </>
       }

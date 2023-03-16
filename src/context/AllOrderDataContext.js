@@ -1,4 +1,4 @@
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import React, { createContext, useEffect, useState }from 'react';
 import { db } from '../Firebasefunctions/db';
 
@@ -9,10 +9,12 @@ const AllOrderDataContext = ({children}) => {
     useEffect(() => {
         const getData = async () => {
             try {
-                const q = query(ordersCollectionsRef, orderBy("orderNumber", 'desc'));
-                const querySnapshot = await getDocs(q);
-                const data = querySnapshot.docs.map((doc) => ({key: doc.id,...doc.data()}));
-                setData(data);
+                const q = query(ordersCollectionsRef, orderBy("orderNumber", 'desc'));                
+                onSnapshot(q, (querySnapshot) => {
+                    const data = querySnapshot.docs.map((doc) => ({key: doc.id,...doc.data()}));
+                    setData(data);
+                })
+                
             } catch (error) {
                 setData([])
                 console.log(error);

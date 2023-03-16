@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Form, InputNumber, Table } from 'antd';
-import { PlusOutlined, MinusOutlined, CloseOutlined } from "@ant-design/icons";
+import { Button, Form, Table } from 'antd';
+import { CloseOutlined } from "@ant-design/icons";
 import { useMemo } from 'react';
 import { columns } from './Tablehelper';
 import { ChargeColumn } from '../ProductAddTable/Columns';

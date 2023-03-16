@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Button, Dropdown, Layout, Menu, Typography, Row, Col } from 'antd';
+import { Button, Dropdown, Layout, Typography, Row, Col } from 'antd';
 import { SaveOutlined, DashOutlined, LockOutlined, PlusOutlined } from '@ant-design/icons';
 import { FaLevelUpAlt } from 'react-icons/fa';
 import { collection, doc, updateDoc } from 'firebase/firestore';
@@ -19,13 +19,14 @@ import { PriceContextProvider } from '../../../context/PriceContext';
 import moment from 'moment';
 import ProductShortageModal from '../../../components/OrderModals/ProductShortageModal';
 import PickupModal from '../../../components/OrderModals/PickupModal';
+import BundleAddTable from '../../../components/BundleAddTable/BundleAddTable';
 
 
 const { Title } = Typography;
 const { Content } = Layout;
 
 const AddOrder = ({ oData }) => {
-  const {price, setPrice} = useContext(PriceContextProvider);
+  const { price, setPrice } = useContext(PriceContextProvider);
   let navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [pickupNReturnDate, setPickupNReturnDate] = useState([]);
@@ -37,6 +38,7 @@ const AddOrder = ({ oData }) => {
   const [productsData, setProductsData] = useState([]);
   const [loadingProductTable, setLoadingProductTable] = useState(false);
   const [products, setProducts] = useState([]);
+  const [bundleData, setBundleData] = useState([]);
   const [shortageProducts, setShortageProducts] = useState([])
   const [isOpenShortageModal, seIsOpenShortageModal] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
@@ -55,7 +57,7 @@ const AddOrder = ({ oData }) => {
     if (dateString[0]?.length > 0) {
       setPickupNReturnDate(dateString);
     }
-    else{
+    else {
       setPickupNReturnDate([]);
     }
   }
@@ -67,13 +69,16 @@ const AddOrder = ({ oData }) => {
   const handleCreateOrder = async (status) => {
     try {
       setLoading(true);
-      const isShortage = productsData.filter((data) => data.stock - data.quantity < 0 && status !== 'Concept');
-      if (isShortage.length > 0) {
-        setShortageProducts(isShortage); 
-        setLoading(false);       
-        return seIsOpenShortageModal(true);
+      if (status === 'Reserved') {
+        const isShortage = productsData.filter((data) => data.stock - data.quantity < 0);
+        const isShortageBundle = bundleData.filter((data) => data.stock - data.quantity < 0);
+        if (isShortage.length > 0 || isShortageBundle.length > 0) {
+          setShortageProducts([...isShortage, ...isShortageBundle]);
+          setLoading(false);
+          return seIsOpenShortageModal(true);
+        }
       }
-      else {        
+      else {
         const data = await getAllData(ordersCollectionsRef);
         const orderPicks = pickupNReturnDate.length > 0 ? pickupNReturnDate : '';
         const order = { ...orderData, rentalPeriod: orderPicks, status, price, orderNumber: data.length + 1, amount: 0, secuirityDeposit: 0 }
@@ -86,13 +91,21 @@ const AddOrder = ({ oData }) => {
             await addDocumentData(customInfoRef, info);
           }
         }
-        if (productsData.length > 0 ) {
+        if (productsData.length > 0) {
           const productRef = collection(db, "orders_collections", id, 'products');
           for (let i = 0; i < productsData.length; i++) {
             const { product_name, imageUrl, productId, variationId, quantity, dayCount, charge } = productsData[i];
             await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status });
           }
         }
+        if (bundleData.length > 0) {
+          for (let i = 0; i < bundleData.length; i++) {
+            const orderBundleDocRef = collection(db, "orders_collections", res?.id, 'bundles');
+            const { bundleId, quantity, dayCount, charge } = bundleData[i];
+              const bundleInfo = { bundleId, quantity, dayCount, charge, status }
+              await addDocumentData(orderBundleDocRef, bundleInfo);              
+            }
+          }        
         navigate(`/orders/${id}`)
         setLoading(false);
       }
@@ -142,11 +155,37 @@ const AddOrder = ({ oData }) => {
     const newData = productsData.filter((item, index) => index !== record.key);
     setProductsData(newData);
   };
+  const handleAddBundleData = async (bundleData) => {
+    setLoadingProductTable(true);
+    setShowProducts(false)
+    const { id, bundleName, imageUrl, ...rest } = bundleData;
+    const diff = moment(pickupNReturnDate[1]).diff(moment(pickupNReturnDate[0]), 'days');
+    const bundleInfo = { bundleId: id, quantity: 1, dayCount: diff > 0 ? diff : 1, charge: diff > 0 ? (diff * 50) : 60, status: orderData?.status === 'Concept' ? 'Concept' : "Reserved" }
+    setBundleData((curr) => ([...curr, { ...bundleInfo, bundleName, imageUrl, orderBundleId: Math.random(), ...rest }]));
+    setLoadingProductTable(false);
+  }
 
-
-  const handlepickUp = async (selectedItems) => {
+  const handleDeleteBundle = async (record) => {
+    setLoadingProductTable(true);
+    const newData = bundleData.filter((item, index) => item.orderBundleId !== record.orderBundleId);
+    setBundleData(newData);
+    setLoadingProductTable(false);
+  };
+  const handlepickUp = async (selectedIds, bundleSelectedIds, stat) => {
     setPickupLoading(true);
-    const isShortage = productsData.filter((data) => data.stock - data.quantity < 0);
+    let isShortage = []
+    selectedIds.forEach((id) => {
+      const data = productsData.find(data => data.orderProductsId === id);
+      if (data?.stock - data?.quantity < 0) {
+        isShortage.push({ ...data, isBundle: false });
+      }
+    });
+    bundleSelectedIds.forEach((id) => {
+      const data = bundleData.find(data => data.orderBundleId === id);
+      if (data?.stock - data?.quantity < 0) {
+        isShortage.push({ ...data, isBundle: true });
+      }
+    });
     if (isShortage.length > 0) {
       setShortageProducts(isShortage);
       setLoading(false);
@@ -155,37 +194,45 @@ const AddOrder = ({ oData }) => {
     }
     else {
       setPickupLoading(true);
-      const status =  selectedItems.length === productsData.length ? 'Picked up' : 'Mixed';
+      const status = selectedIds.length === productsData.length && bundleSelectedIds.length === bundleData.length ? 'Picked up' : 'Mixed';
       const data = await getAllData(ordersCollectionsRef);
-        const orderPicks = pickupNReturnDate.length > 0 ? pickupNReturnDate : '';
-        const order = { ...orderData, rentalPeriod: orderPicks, status, price, orderNumber: data.length, amount: 0, securityDeposite: 0 }
-        const res = await addDocumentData(ordersCollectionsRef, order);
-        const { id } = res;
-        if (customInformation.length > 0) {
-          const customInfoRef = collection(db, "orders_collections", id, 'customInformation');
-          for (let i = 0; i < customInformation.length; i++) {
-            const info = customInformation[i];
-            await addDocumentData(customInfoRef, info);
-          }
+      const orderPicks = pickupNReturnDate.length > 0 ? pickupNReturnDate : '';
+      const order = { ...orderData, rentalPeriod: orderPicks, status, price, orderNumber: data.length, amount: 0, securityDeposite: 0 }
+      const res = await addDocumentData(ordersCollectionsRef, order);
+
+      if (customInformation.length > 0) {
+        const customInfoRef = collection(db, "orders_collections", res?.id, 'customInformation');
+        for (let i = 0; i < customInformation.length; i++) {
+          const info = customInformation[i];
+          await addDocumentData(customInfoRef, info);
         }
+      }
       for (let i = 0; i < productsData.length; i++) {
-        const productRef = collection(db, "orders_collections", id, 'products');
-        const { product_name, imageUrl, productId, variationId, quantity, dayCount, charge } = productsData[i];
+        const productRef = collection(db, "orders_collections", res?.id, 'products');
+        const { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, orderProductsId } = productsData[i];
         const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-        if (selectedItems.includes(i)) {                   
-            await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status: 'Picked up' });
-            const data = await getAData(variationDoc);
-            await updateDoc(variationDoc, {pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity)});
+        if (selectedIds.includes(orderProductsId)) {
+          await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status: 'Picked up' });
+          const data = await getAData(variationDoc);
+          await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
         }
-        else {
-          await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status: 'Reserved' }); 
-        }             
-      }           
+      }
+      for (let i = 0; i < bundleData.length; i++) {
+        const orderBundleDocRef = collection(db, "orders_collections", res?.id, 'bundles');
+        const { bundleId, orderBundleId, quantity, dayCount, charge } = bundleData[i];
+        const bundleDocRef = doc(db, "bundles_collections", bundleId);
+        if (bundleSelectedIds.includes(orderBundleId)) {
+          const bundleInfo = { bundleId, quantity, dayCount, charge, status: 'Picked up' }
+          await addDocumentData(orderBundleDocRef, bundleInfo);
+          const data = await getAData(bundleDocRef);
+          await updateDoc(bundleDocRef, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
+        }
+      }
       setPickupLoading(false);
       setShowPickupModal(false);
-      navigate(`/orders/${id}`)
-    }    
-}
+      navigate(`/orders/${res?.id}`)
+    }
+  }
   return (
     <>
       <Header>
@@ -203,23 +250,23 @@ const AddOrder = ({ oData }) => {
 
             {
               pickupNReturnDate.length > 0 ?
-              <>
-                {
-                  productsData.length > 0 ?
-                    <div className='reserveNPickup'>
+                <>
+                  {
+                    productsData.length > 0 ?
+                      <div className='reserveNPickup'>
+                        <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleCreateOrder('Reserved')}>Reserve</Button>
+                        <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
+                      </div>
+                      :
                       <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleCreateOrder('Reserved')}>Reserve</Button>
-                      <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
-                    </div>
-                    :
-                    <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleCreateOrder('Reserved')}>Reserve</Button>
 
-                }
-              </>
-              :
-              null
+                  }
+                </>
+                :
+                null
             }
             <div className='order-btn-options'>
-              <Dropdown overlayClassName='order-btn-options-dropdown' menu={{items}} trigger={['click']} arrow={true}>
+              <Dropdown overlayClassName='order-btn-options-dropdown' menu={{ items }} trigger={['click']} arrow={true}>
                 <Button icon={<DashOutlined />} size='large' />
               </Dropdown>
             </div>
@@ -228,7 +275,7 @@ const AddOrder = ({ oData }) => {
         </div>
       </Header>
       {
-        products.length > 0 ?
+        products.length > 0 || bundleData?.length > 0 ?
           <Content className='main_content' >
             <Row gutter={[24, 8]}>
               <CustomerForm
@@ -247,18 +294,31 @@ const AddOrder = ({ oData }) => {
               <Col span={24} xs={24} style={{ paddingBottom: '5rem' }}>
                 <div className='product-box'>
                   <div className="product-info">
-                    <ProductSearch handleAddProductData={handleAddProductData} showProducts={showProducts} setShowProducts={setShowProducts} />
+                    <ProductSearch handleAddProductData={handleAddProductData} handleAddBundleData={handleAddBundleData} showProducts={showProducts} setShowProducts={setShowProducts} />
                     {
                       productsData.length > 0 ?
                         <div className="product-details">
-                          <ProductAddTable
-                            orderId={false}
-                            loadingProductTable={loadingProductTable}
-                            productsData={productsData}
-                            setProductsData={setProductsData}
-                            handleDeleteProduct={handleDeleteProduct}
-                            pickupNReturnDate={pickupNReturnDate}
-                          />
+                          {
+                            productsData.length > 0 &&
+                            <ProductAddTable
+                              loadingProductTable={loadingProductTable}
+                              productsData={productsData}
+                              handleDeleteProduct={handleDeleteProduct}
+                              setProductsData={setProductsData}
+                              pickupNReturnDate={pickupNReturnDate}
+                            />
+                          }
+                          {
+                            bundleData.length > 0 &&
+                            <BundleAddTable
+                              showHeader={productsData.length === 0}
+                              loadingBundleTable={loadingProductTable}
+                              bundleData={bundleData}
+                              handleDeleteBundle={handleDeleteBundle}
+                              setBundleData={setBundleData}
+                              pickupNReturnDate={pickupNReturnDate}
+                            />
+                          }
                         </div>
                         :
                         <div className="no-info">
@@ -295,13 +355,19 @@ const AddOrder = ({ oData }) => {
         setIsShowModal={seIsOpenShortageModal}
         dataSource={shortageProducts}
       />
+
       <PickupModal
-              showPickupModal={showPickupModal}
-              setShowPickupModal={setShowPickupModal}
-              productsData={productsData}
-              handlepickUp={handlepickUp}
-              pickupLoading={pickupLoading}
-            />
+        isNewOrder={true}
+        showPickupModal={showPickupModal}
+        setShowPickupModal={setShowPickupModal}
+        productsData={productsData}
+        pkLoading={pickupLoading}
+        bundleData={bundleData}
+        handlepickUpNew={handlepickUp}
+        setBundleData={setBundleData}
+        setProductsData={setProductsData}
+        setLoadingProductTable={setLoadingProductTable}
+      />
     </>
   );
 };

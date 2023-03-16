@@ -45,12 +45,11 @@ const columns = [
         }
     },
 ]
-const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundleData, orderId, setBundleData, setProductsData, getOrderData, setLoadingProductTable }) => {
+const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundleData, orderId, setBundleData, setProductsData, getOrderData, setLoadingProductTable, isReturn=false, isNewOrder=false, handlepickUpNew, pkLoading }) => {
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const [items, setItems] = useState(0);
     const [bundleSelectedRowKeys, setBundleSelectedRowKeys] = useState([]);
-    const [bundleItems, setBundleItems] = useState(0);
-    const [loading, setLoading] = useState(false);
+    const [bundleItems, setBundleItems] = useState(0);    
     const [pickupLoading, setPickupLoading] = useState(false);
     const [selectedId, setselectedIds] = useState([]);
     const [bundleSelectedId, setBundleSelectedIds] = useState([]);
@@ -102,7 +101,6 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
             return seIsOpenShortageModal(true);
         }
         else {
-            setLoadingProductTable(true);
             setPickupLoading(true);
             for (let i = 0; i < productsData.length; i++) {
                 const { orderProductsId, variationId, productId, quantity } = productsData[i];
@@ -112,7 +110,9 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                     if (stat === "Picked up") {
                         const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
                         const data = await getAData(variationDoc);
-                        await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
+                        let picked = parseFloat(data?.pickedUp) + parseFloat(quantity);
+                        let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
+                        await updateDoc(variationDoc, { pickedUp: isReturn ? returned : picked  });
                     }                    
                 }
             }
@@ -124,10 +124,13 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                     if (stat === "Picked up") {
                         const bundleDoc = doc(db, "bundles_collections", bundleId);
                         const data = await getAData(bundleDoc);
-                        await updateDoc(bundleDoc, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
+                        let picked = parseFloat(data?.pickedUp) + parseFloat(quantity);
+                        let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
+                        await updateDoc(bundleDoc, { pickedUp: isReturn ? returned : picked });
                     }                    
                 }
             }
+            setLoadingProductTable(true);
             setProductsData([]);
             setBundleData([]);
             getOrderData();
@@ -200,22 +203,34 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                     top: -20
                 }}
                 title={<>
-                    <Title level={4}>Pick up {items + bundleItems} items</Title>
+                    <Title level={4}>{isReturn ? 'Return' : 'Pick up'} {items + bundleItems} items</Title>
                     <Text>Select items that are going out</Text>
                 </>}
                 onCancel={() => setShowPickupModal(false)}
                 footer={[
                     <Button size='large' onClick={() => setShowPickupModal(false)}>Cancel</Button>,
                     selectedRowKeys.length > 0 || bundleSelectedRowKeys.length > 0 ?
+                        isNewOrder ?
                         <Button
-                            loading={pickupLoading}
-                            icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => handlepickUp(selectedId, bundleSelectedId, 'Picked up')}>
+                            loading={pkLoading}
+                            icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => handlepickUpNew(selectedId, bundleSelectedId, 'Picked up')}>
                             Pick up {items + bundleItems} items
                         </Button>
                         :
                         <Button
+                            loading={pickupLoading}
+                            icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => handlepickUp(selectedId, bundleSelectedId, isReturn ? 'returned' : 'Picked up')}>
+                            {isReturn ? 'Return' : 'Pick up'} {items + bundleItems} items
+                        </Button>
+                        :
+                        <Button
                             icon={<FaLevelUpAlt />} size='large'>
-                            No items to pick up
+                            {
+                                isReturn ? 
+                                'No items to returned'
+                                :
+                                'No items to pick up'
+                            }
                         </Button>
                 ]}
             >
@@ -235,7 +250,6 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                     {
                         productsData.length > 0 &&
                         <Table
-                            loading={loading}
                             className='pickupModalTable'
                             size='small'
                             bordered={false}
@@ -258,7 +272,6 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                     {
                         bundleData.length > 0 &&
                         <Table
-                            loading={loading}
                             className='pickupModalTable'
                             size='small'
                             bordered={false}
