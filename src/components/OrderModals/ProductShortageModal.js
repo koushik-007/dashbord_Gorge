@@ -10,7 +10,10 @@ const columns = [
         title: 'Product',
         dataIndex: 'product',
         render: (product, record) => {
-            return <span> {product} - {record.isOpenShortageModalBundle ? '' : <Variants data={record.rest}/>}</span>
+            return <span> {product} {record?.isBundle ? '' : <>
+            -
+            <Variants data={record?.rest}/>
+            </>}</span>
         }
       },
       {
@@ -21,33 +24,33 @@ const columns = [
       
 ]
 
-const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource, isOpenShortageModalBundle=false}) => {
+const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource}) => {    
     const data = useMemo(()=> {
-        if (isOpenShortageModalBundle) {
-            dataSource.map(({bundleName, stock, quantity}, index) => {
+        const data = dataSource.map((item, index) => {
+            if (item?.isBundle) {
+                const {bundleName, stock, quantity} = item;
                 return {
                     key: index,
                     product: bundleName,
                     issue: <span>{Math.abs(stock - quantity)} short</span>,
-                    isOpenShortageModalBundle
+                    isBundle: true
                 }
-            })
-        }
-        else{
-            dataSource.map(({charge,id, dayCount,imageUrl,key,orderProductsId,pickedUp,price,productId,product_name,quantity,status,stock,variationId, ...rest}, index) => {
-                return {
-                    key: index,
-                    product: product_name,
-                    issue: <span>{Math.abs(stock - quantity)} short</span>,
-                    rest
-                }
-            })
-        }
-    }, [dataSource, isOpenShortageModalBundle])
+            }
+            const {charge,id, dayCount,imageUrl,key,orderProductsId,pickedUp,price,productId,product_name,quantity,status,stock,variationId, ...rest} = item;
+             return {
+                key: index,
+                product: product_name,
+                issue: <span>{Math.abs(stock - quantity)} short</span>,
+                isBundle: false,
+                rest
+            }
+        })
+        return data
+    }, [dataSource])
     return (
         <Modal
         destroyOnClose={true}
-        open={isShowModal || isOpenShortageModalBundle}
+        open={isShowModal}
         title="Shortage"
         onCancel={() => setIsShowModal(false)}
         style={{top: -20}}

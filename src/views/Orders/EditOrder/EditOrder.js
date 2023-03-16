@@ -44,13 +44,12 @@ const EditOrder = () => {
   const [pickupLoading, setPickupLoading] = useState(false);
   const [shortageProducts, setShortageProducts] = useState([])
   const [isOpenShortageModal, seIsOpenShortageModal] = useState(false);
-  const [isOpenShortageModalBundle, seIsOpenShortageModalBundle] = useState(false);
   const [showProducts, setShowProducts] = useState(false);
   const orderRef = doc(db, "orders_collections", orderId);
   const orderProductRef = collection(db, "orders_collections", orderId, "products");
   const orderBundleRef = collection(db, "orders_collections", orderId, "bundles");
   const customInfoRef = collection(db, "orders_collections", orderId, 'customInformation');
-const [archivedLoading, setArhivedLoading] = useState(false);
+  const [archivedLoading, setArhivedLoading] = useState(false);
 
   const handleDate = async (dateString) => {
     if (dateString[0]?.length > 0) {
@@ -58,7 +57,7 @@ const [archivedLoading, setArhivedLoading] = useState(false);
       setPickupNReturnDate(dateString);
       await updateDoc(orderRef, newData);
     }
-    else{
+    else {
       const newData = { rentalPeriod: [] }
       setPickupNReturnDate([]);
       await updateDoc(orderRef, newData);
@@ -77,10 +76,10 @@ const [archivedLoading, setArhivedLoading] = useState(false);
       const varaitionData = await getAData(varaition);
       setProductsData((curr) => ([...curr, { ...varaitionData, imageUrl, quantity, charge, variationId: obj.variationId, productId: obj.productId, orderProductsId: id, dayCount, status }]));
     });
-    orderbundles.forEach( async (bundles) => {
+    orderbundles.forEach(async (bundles) => {
       const bundleDoc = doc(db, "bundles_collections", bundles.bundleId);
       const bundleData = await getAData(bundleDoc);
-      setBundleData((curr) => ([...curr, {...bundles, orderBundleId: bundles.id, ...bundleData }]))
+      setBundleData((curr) => ([...curr, { ...bundles, orderBundleId: bundles.id, ...bundleData }]))
     })
     setLoading(false);
   }
@@ -97,14 +96,11 @@ const [archivedLoading, setArhivedLoading] = useState(false);
   const handleorderStatus = async (status) => {
     const isShortage = productsData.filter((data) => data.stock - data.quantity < 0 && status !== 'Concept');
     const isShortageBundle = bundleData.filter((data) => data.stock - data.quantity < 0 && status !== 'Concept');
-    if (isShortage.length > 0) {
-      setShortageProducts(isShortage);
+    if (isShortage.length > 0 || isShortageBundle.length > 0) {
+      setShortageProducts([...isShortage, ...isShortageBundle]);
       return seIsOpenShortageModal(true);
     }
-    else if (isShortageBundle.length > 0) {
-      setShortageProducts(isShortageBundle);
-      return seIsOpenShortageModalBundle(true);
-    }
+    
     else {
       await setOrderData((curr) => ({ ...curr, status }));
       await updateDoc(orderRef, { status });
@@ -130,14 +126,14 @@ const [archivedLoading, setArhivedLoading] = useState(false);
   }
   const handleArchivedOrder = async () => {
     setArhivedLoading(true);
-      await updateDoc(orderRef, { status: "archived" });
-      setArhivedLoading(false)
-      navigate('/orders');
+    await updateDoc(orderRef, { status: "archived" });
+    setArhivedLoading(false)
+    navigate('/orders');
   }
   const handleAddCustomer = async (customerData) => {
-    await setOrderData((curr) => ({ ...curr, ...customerData })); 
-    await Object.keys(customerData).forEach(key => customerData[key] === undefined ? delete customerData[key] : {});   
-     await updateDoc(orderRef, customerData);
+    await setOrderData((curr) => ({ ...curr, ...customerData }));
+    await Object.keys(customerData).forEach(key => customerData[key] === undefined ? delete customerData[key] : {});
+    await updateDoc(orderRef, customerData);
   }
   const handleRemoveCustomer = async () => {
     setIsRemoveCustomerLoading(true);
@@ -171,7 +167,7 @@ const [archivedLoading, setArhivedLoading] = useState(false);
     const diff = moment(pickupNReturnDate[1]).diff(moment(pickupNReturnDate[0]), 'days');
     const productInfo = { product_name, productId, imageUrl, variationId: id, quantity: 1, dayCount: diff > 0 ? diff : 1, charge: diff > 0 ? (diff * price) : price, status: orderData?.status === 'Concept' ? 'Concept' : "Reserved" }
     const res = await addDocumentData(orderProductRef, productInfo);
-    setProductsData((curr) => ([...curr, { ...productInfo, orderProductsId: res.id, ...rest }]));   
+    setProductsData((curr) => ([...curr, { ...productInfo, orderProductsId: res.id, ...rest }]));
     setLoadingProductTable(false);
   }
   const handleAddBundleData = async (bundleData) => {
@@ -181,7 +177,7 @@ const [archivedLoading, setArhivedLoading] = useState(false);
     const diff = moment(pickupNReturnDate[1]).diff(moment(pickupNReturnDate[0]), 'days');
     const bundleInfo = { bundleId: id, quantity: 1, dayCount: diff > 0 ? diff : 1, charge: diff > 0 ? (diff * 50) : 60, status: orderData?.status === 'Concept' ? 'Concept' : "Reserved" }
     const res = await addDocumentData(orderBundleRef, bundleInfo);
-    setBundleData((curr) => ([...curr, { ...bundleInfo, bundleName, imageUrl, orderBundleId: res.id, ...rest }]));   
+    setBundleData((curr) => ([...curr, { ...bundleInfo, bundleName, imageUrl, orderBundleId: res.id, ...rest }]));
     setLoadingProductTable(false);
   }
   const handleDeleteProduct = async (record) => {
@@ -212,21 +208,21 @@ const [archivedLoading, setArhivedLoading] = useState(false);
       setLoadingProductTable(true);
       for (let i = 0; i < productsData.length; i++) {
         const { orderProductsId, variationId, productId, quantity } = productsData[i];
-        const productDocRef = doc(db, "orders_collections", orderId, "products", orderProductsId);       
-       
+        const productDocRef = doc(db, "orders_collections", orderId, "products", orderProductsId);
+
         if (selectedItems.includes(orderProductsId)) {
           await updateDoc(productDocRef, { status: stat })
           if (stat === "Picked up") {
             const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-            const data = await getAData(variationDoc);    
-            await updateDoc(variationDoc, {pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity)});
-           }
-           if (stat === "returned") {
+            const data = await getAData(variationDoc);
+            await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) + parseFloat(quantity) });
+          }
+          if (stat === "returned") {
             const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-           const data = await getAData(variationDoc);
-           await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) - parseFloat(quantity) });
-          }                  
-        }        
+            const data = await getAData(variationDoc);
+            await updateDoc(variationDoc, { pickedUp: parseFloat(data?.pickedUp) - parseFloat(quantity) });
+          }
+        }
       }
       setProductsData([]);
       getOrderData()
@@ -240,10 +236,10 @@ const [archivedLoading, setArhivedLoading] = useState(false);
 
   const calculateItems = (data, bundleData) => {
     const quantity = data.map(data => parseFloat(data.quantity));
-    let total = quantity.reduce((a, b) => a + b, 0);    
+    let total = quantity.reduce((a, b) => a + b, 0);
     const bundleQuantity = bundleData.map(data => parseFloat(data.quantity));
     let bundletotal = bundleQuantity.reduce((a, b) => a + b, 0);
-    setItems(total+ bundletotal);
+    setItems(total + bundletotal);
   }
   const setStatus = async () => {
     const pickedUp = productsData.filter(({ status }) => status === "Picked up");
@@ -317,45 +313,53 @@ const [archivedLoading, setArhivedLoading] = useState(false);
                           null
                       }
                       {
+                        bundleData.length > 0 && bundleData.filter(({ status }) => status !== "Picked up" && status !== "returned").length > 0 ?
+                          <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
+                          :
+                          null
+                      }
+                      {
                         productsData.length > 0 && productsData.filter(({ status }) => status === "Picked up").length > 0 ?
                           <Button icon={<FaLevelUpAlt />} type='primary' size='large' style={{ background: 'rgb(116, 204, 32)' }} onClick={() => setShowReturnModal(true)}>Return items</Button>
                           :
                           null
                       }
-                       {
+                      {
                         orderData?.status === 'returned' &&
                         <Button icon={<DeleteOutlined />} loading={archivedLoading} size='large' onClick={handleArchivedOrder}>Archive order</Button>
                       }
                     </>
-                  }                  
+                  }
                   <div className='order-btn-options'>
-                    <Dropdown overlayClassName='order-btn-options-dropdown' 
-                    menu={{items: [
-                      {
-                        label: 'Revert to concept',
-                        key: '1',
-                        disabled: orderData?.status === 'Concept' || orderData?.status === 'picked up' 
-                      },
-                      {
-                        label: 'Revert to reserved',
-                        key: '2',
-                        disabled: !(orderData?.status === 'Reserve')
-                      },
-                      {
-                        label: 'Revert to reserved',
-                        key: '3',
-                        disabled: !(orderData?.status === 'Concept')
-                      },
-                      {
-                        label: 'Revert to reserved',
-                        key: '4',
-                        disabled: !(orderData?.status === 'Concept')
-                      },
-                      {
-                        label: 'Cancel order',
-                        key: '5',
-                      }
-                    ]}} trigger={['click']} arrow>
+                    <Dropdown overlayClassName='order-btn-options-dropdown'
+                      menu={{
+                        items: [
+                          {
+                            label: 'Revert to concept',
+                            key: '1',
+                            disabled: orderData?.status === 'Concept' || orderData?.status === 'picked up'
+                          },
+                          {
+                            label: 'Revert to reserved',
+                            key: '2',
+                            disabled: !(orderData?.status === 'Reserve')
+                          },
+                          {
+                            label: 'Revert to reserved',
+                            key: '3',
+                            disabled: !(orderData?.status === 'Concept')
+                          },
+                          {
+                            label: 'Revert to reserved',
+                            key: '4',
+                            disabled: !(orderData?.status === 'Concept')
+                          },
+                          {
+                            label: 'Cancel order',
+                            key: '5',
+                          }
+                        ]
+                      }} trigger={['click']} arrow>
                       <Button icon={<DashOutlined />} size='large' />
                     </Dropdown>
                   </div>
@@ -385,29 +389,29 @@ const [archivedLoading, setArhivedLoading] = useState(false);
                       {
                         productsData.length > 0 || bundleData.length > 0 ?
                           <div className="product-details">
-                           {
-                            productsData.length > 0 &&
-                            <ProductAddTable
-                            orderId={orderId}
-                            loadingProductTable={loadingProductTable}
-                            productsData={productsData}
-                            handleDeleteProduct={handleDeleteProduct}
-                            setProductsData={setProductsData}
-                            pickupNReturnDate={pickupNReturnDate}
-                          />
-                           }
-                             {
+                            {
+                              productsData.length > 0 &&
+                              <ProductAddTable
+                                orderId={orderId}
+                                loadingProductTable={loadingProductTable}
+                                productsData={productsData}
+                                handleDeleteProduct={handleDeleteProduct}
+                                setProductsData={setProductsData}
+                                pickupNReturnDate={pickupNReturnDate}
+                              />
+                            }
+                            {
                               bundleData.length > 0 &&
                               <BundleAddTable
-                              showHeader={productsData.length === 0}
-                              orderId={orderId}
-                              loadingBundleTable={loadingProductTable}
-                              bundleData={bundleData}
-                              handleDeleteBundle={handleDeleteBundle}
-                              setBundleData={setBundleData}
-                              pickupNReturnDate={pickupNReturnDate}
-                            />
-                             }
+                                orderId={orderId}
+                                showHeader={productsData.length === 0}
+                                loadingBundleTable={loadingProductTable}
+                                bundleData={bundleData}
+                                handleDeleteBundle={handleDeleteBundle}
+                                setBundleData={setBundleData}
+                                pickupNReturnDate={pickupNReturnDate}
+                              />
+                            }
                           </div>
                           :
                           <div className="no-info">
@@ -433,7 +437,6 @@ const [archivedLoading, setArhivedLoading] = useState(false);
               handleEditInfo={handleEditInfo}
             />
             <ProductShortageModal
-              isOpenShortageModalBundle={isOpenShortageModalBundle}
               isShowModal={isOpenShortageModal}
               setIsShowModal={seIsOpenShortageModal}
               dataSource={shortageProducts}
@@ -441,9 +444,14 @@ const [archivedLoading, setArhivedLoading] = useState(false);
             <PickupModal
               showPickupModal={showPickupModal}
               setShowPickupModal={setShowPickupModal}
-              productsData={productsData.filter(({ status }) => status !== "Picked up" && status !== "returned")}
-              handlepickUp={handlepickUp}
+              productsData={productsData.filter(({ status }) => status !== "Picked up" && status !== "returned")}              
               pickupLoading={pickupLoading}
+              bundleData={bundleData.filter(({ status }) => status !== "Picked up" && status !== "returned")}
+              orderId={orderId}
+              setBundleData={setBundleData}
+              setProductsData={setProductsData}
+              getOrderData={getOrderData}
+              setLoadingProductTable={setLoadingProductTable}
             />
             <ReturnModal
               showReturnModal={showReturnModal}

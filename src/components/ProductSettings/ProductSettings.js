@@ -50,15 +50,24 @@ const ProductSettings = ({ product, productId, setProduct }) => {
             const q = query(orderProducts, where("productId", "==", productId))
             const querySnapshot = await getAllData(q);
             if (querySnapshot.length > 0) {
-                return message.error("this prduct has been reserved/picked up so it can't delete now");
+                setDeleteLoading(false);
+                message.error("this prduct has been reserved/picked up so it can't delete now");
+                break;
             }
-            setDeleteLoading(false);
         }
         const productdoc = doc(db, "product_collections", productId);
         await deleteDocument(productdoc);
+        if (product?.imageName) {
+            const desertRef = ref(storage, `images/${product.imageName}`);
+            deleteObject(desertRef).then(async (data) => {
+                console.log(data)
+            }).catch((error) => {
+                setImageLoading(false);
+                message.error("Image is not removed")
+            });
+        }
         setDeleteLoading(false);
         navigate('/products')
-
     }
 
     const handleUploadImage = async ({ fileList }) => {
@@ -72,7 +81,7 @@ const ProductSettings = ({ product, productId, setProduct }) => {
             setImageLoading(false);
         });
     };
-    const handleDeleteImage = () => {
+    function handleDeleteImage() {
         setImageLoading(true);
         const desertRef = ref(storage, `images/${product.imageName}`);
         deleteObject(desertRef).then(async () => {
@@ -89,7 +98,7 @@ const ProductSettings = ({ product, productId, setProduct }) => {
         }).catch((error) => {
             setImageLoading(false);
             message.error("Image is not removed")
-        });        
+        });
     }
 
     return (
@@ -161,7 +170,7 @@ const ProductSettings = ({ product, productId, setProduct }) => {
                                             listType="picture-card"
                                             showUploadList={false}
                                         >
-                                           <div>
+                                            <div>
                                                 {
                                                     imageLoading ?
                                                         <>
