@@ -385,17 +385,21 @@ const [archivedLoading, setArhivedLoading] = useState(false);
                       {
                         productsData.length > 0 || bundleData.length > 0 ?
                           <div className="product-details">
+                           {
+                            productsData.length > 0 &&
                             <ProductAddTable
-                              orderId={orderId}
-                              loadingProductTable={loadingProductTable}
-                              productsData={productsData}
-                              handleDeleteProduct={handleDeleteProduct}
-                              setProductsData={setProductsData}
-                              pickupNReturnDate={pickupNReturnDate}
-                            />
+                            orderId={orderId}
+                            loadingProductTable={loadingProductTable}
+                            productsData={productsData}
+                            handleDeleteProduct={handleDeleteProduct}
+                            setProductsData={setProductsData}
+                            pickupNReturnDate={pickupNReturnDate}
+                          />
+                           }
                              {
                               bundleData.length > 0 &&
                               <BundleAddTable
+                              showHeader={productsData.length === 0}
                               orderId={orderId}
                               loadingBundleTable={loadingProductTable}
                               bundleData={bundleData}

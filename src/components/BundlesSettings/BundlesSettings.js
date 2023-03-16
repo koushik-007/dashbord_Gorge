@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { UploadedImg } from '../UploadCustom/UploadCustom';
 import { deleteObject, getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../../Firebasefunctions/db';
-import { doc, updateDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc } from 'firebase/firestore';
 import CustomSpinner from '../CustomSpinner/CustomSpinner';
 
-const { TextArea } = Input;
 
 const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
     let navigate = useNavigate();
@@ -19,11 +18,21 @@ const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
     const [imageLoading, setImageLoading] = useState(false);
     const bundlesDocRef = doc(db, "bundles_collections", BundlesId);
     const onFinish = async (values) => {
-        console.log(values);
+        setLoading(true);        
+        await updateDoc(bundlesDocRef, values);
+        setLoading(false);
+        setIsDisabled(true);
+        message.info(
+            {
+                content: <div>
+                    bundle saved
+                </div>,
+                className: 'notify_saved_customer',
+            });
     }
-
-    const handleDelete = () => {
-
+    const ordersCollectionRef = collection(db, "orders_collections");
+    const handleDelete = async () => {
+        
     }
     const handleUploadImage = async ({ fileList }) => {
         if (fileList[0].originFileObj == null) return;
@@ -121,8 +130,8 @@ const BundlesSettings = ({ bundleData, BundlesId, setBundleData }) => {
                         </Col>
                         <Col span={18} offset={3}>
                             <div className="submitBtn">
-                                <Button size='large' type='danger' loading={deleteLoading}>Delete</Button>
-                                <Button size='large' onClick={() => navigate('/bundles')}>Cancel</Button>
+                                <Button size='large' type='danger' loading={deleteLoading} onClick={handleDelete}>Delete</Button>
+                                <Button size='large' onClick={() => navigate('content')}>Cancel</Button>
                                 <Form.Item>
                                     <Button type="primary" htmlType="submit" size='large' loading={loading} disabled={deleteLoading || isDisabled}>
                                         Save

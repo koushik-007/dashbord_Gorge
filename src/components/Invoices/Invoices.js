@@ -178,16 +178,19 @@ const Invoices = () => {
                                 </Col>
                                 <Col span={24}>
                                     <br />
-                                    <Table
+                                    {
+                                        productsData.length > 0 &&
+                                        <Table
                                         loading={loading}
                                         pagination={false}
                                         dataSource={productsData}
                                         columns={columns}
                                     />
+                                    }
                                     {
                                         bundlesData.length > 0 ?
                                             <Table
-                                                showHeader={false}
+                                                showHeader={productsData.length === 0}
                                                 loading={loading}
                                                 pagination={false}
                                                 dataSource={bundlesData}

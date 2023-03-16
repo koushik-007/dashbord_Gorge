@@ -11,7 +11,7 @@ import { EditableCell } from '../ProductAddTable/TableHelper';
 
 const { Column } = Table;
 
-const BundleAddTable = ({loadingBundleTable, bundleData, pickupNReturnDate, handleDeleteBundle, setBundleData, orderId}) => {
+const BundleAddTable = ({loadingBundleTable, bundleData, pickupNReturnDate, handleDeleteBundle, setBundleData, orderId, showHeader}) => {
     const [form] = Form.useForm();
     const [editingKey, setEditingKey] = useState('');
     const [customChargesLoading, setCustomChargesLoading] = useState(false)
@@ -99,7 +99,7 @@ const BundleAddTable = ({loadingBundleTable, bundleData, pickupNReturnDate, hand
     return (
         <Form form={form} component={false}>
             <Table
-                showHeader={false}
+                showHeader={showHeader}
                 loading={loadingBundleTable}
                 pagination={false}
                 dataSource={dataSourceLocal}
