@@ -58,7 +58,8 @@ export const columns = [
     className: 'drag-visible',
     width: 100,
     render: (_, record) => {
-      let stock = record.stock - (record.status === "returned" || record.status === "Picked up" ? 0 : record.quantity) ;      
+      const { pickedUp } = record.rest;
+      let stock = record.stock - pickedUp - (record.status === "returned" || record.status === "Picked up" ? 0 : record.quantity) ;      
       return <span className="productAvailablity">
         {
           record.pickupNReturnDate.length > 0 ?

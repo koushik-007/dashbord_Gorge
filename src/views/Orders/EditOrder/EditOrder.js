@@ -93,8 +93,8 @@ const EditOrder = () => {
     getCustomInfo();
   }, []);
   const handleorderStatus = async (status) => {
-    const isShortage = productsData.filter((data) => data.stock - data.quantity < 0 && status !== 'Concept');
-    const isShortageBundle = bundleData.filter((data) => data.stock - data.quantity < 0 && status !== 'Concept');
+    const isShortage = productsData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept');
+    const isShortageBundle = bundleData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept');
     if (isShortage.length > 0 || isShortageBundle.length > 0) {
       setShortageProducts([...isShortage, ...isShortageBundle]);
       return seIsOpenShortageModal(true);

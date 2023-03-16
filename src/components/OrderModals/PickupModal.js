@@ -81,22 +81,21 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
         selectedRowKeys: bundleSelectedRowKeys,
         onChange: onSelectChangeBundle,
     };
-
    async function handlepickUp(selectedIds, bundleSelectedIds, stat) {
         let isShortage = []
         selectedIds.forEach((id) => {
             const data = productsData.find(data => data.orderProductsId === id);
-            if (data?.stock - data?.quantity < 0) {
+            if ((data?.stock - (data?.pickedUp + data?.quantity)) < 0) {
                 isShortage.push({ ...data, isBundle: false });
             }
         });
         bundleSelectedIds.forEach((id) => {
             const data = bundleData.find(data => data.orderBundleId === id);
-            if (data?.stock - data?.quantity < 0) {
+            if ((data?.stock - (data?.pickedUp + data?.quantity)) < 0) {
                 isShortage.push({ ...data, isBundle: true });
             }
         });
-        if (isShortage.length > 0) {
+        if (isShortage.length > 0 && !isReturn) {
             setShortageProducts(isShortage);
             return seIsOpenShortageModal(true);
         }
@@ -107,13 +106,11 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                 const productDocRef = doc(db, "orders_collections", orderId, "products", orderProductsId);
                 if (selectedIds.includes(orderProductsId)) {
                     await updateDoc(productDocRef, { status: stat })
-                    if (stat === "Picked up") {
-                        const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
-                        const data = await getAData(variationDoc);
+                    const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
+                    const data = await getAData(variationDoc);
                         let picked = parseFloat(data?.pickedUp) + parseFloat(quantity);
                         let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
-                        await updateDoc(variationDoc, { pickedUp: isReturn ? returned : picked  });
-                    }                    
+                        await updateDoc(variationDoc, { pickedUp: isReturn ? returned : picked  });                   
                 }
             }
             for (let i = 0; i < bundleData.length; i++) {
@@ -121,13 +118,11 @@ const PickupModal = ({ showPickupModal, setShowPickupModal, productsData, bundle
                 const bundleDocRef = doc(db, "orders_collections", orderId, "bundles", orderBundleId);
                 if (bundleSelectedIds.includes(orderBundleId)) {                    
                     await updateDoc(bundleDocRef, { status: stat })
-                    if (stat === "Picked up") {
                         const bundleDoc = doc(db, "bundles_collections", bundleId);
                         const data = await getAData(bundleDoc);
                         let picked = parseFloat(data?.pickedUp) + parseFloat(quantity);
                         let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
-                        await updateDoc(bundleDoc, { pickedUp: isReturn ? returned : picked });
-                    }                    
+                        await updateDoc(bundleDoc, { pickedUp: isReturn ? returned : picked });                                    
                 }
             }
             setLoadingProductTable(true);

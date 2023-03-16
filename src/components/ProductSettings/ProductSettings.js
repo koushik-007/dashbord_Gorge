@@ -44,29 +44,40 @@ const ProductSettings = ({ product, productId, setProduct }) => {
     const handleDeleteProduct = async () => {
         setDeleteLoading(true);
         const orderData = await getAllData(ordersCollectionRef);
+        let result = [];
         for (let i = 0; i < orderData.length; i++) {
             const { id } = orderData[i];
             const orderProducts = collection(db, "orders_collections", id, "products");
             const q = query(orderProducts, where("productId", "==", productId))
             const querySnapshot = await getAllData(q);
-            if (querySnapshot.length > 0) {
-                setDeleteLoading(false);
-               return message.error("this product has been reserved/picked up so it can't delete now");                
+            result.push(...querySnapshot)
+        }
+        if (result.length > 0) {
+            setDeleteLoading(false);
+            return message.error("this product has been reserved/picked up so it can't delete now");
+        }
+        else {
+            const variationCollectionRef = collection(db, "product_collections", productId, "variations");
+            const varaitionData = await getAllData(variationCollectionRef);
+            for (let i = 0; i < varaitionData.length; i++) {
+                const data = varaitionData[i];
+                const variationDocRef = doc(db, "product_collections", productId, "variations", data.id);
+                await deleteDocument(variationDocRef);
             }
+            const productdoc = doc(db, "product_collections", productId);
+            await deleteDocument(productdoc);
+            if (product?.imageName) {
+                const desertRef = ref(storage, `images/${product.imageName}`);
+                deleteObject(desertRef).then(async (data) => {
+                    console.log(data)
+                }).catch((error) => {
+                    setImageLoading(false);
+                    message.error("Image is not removed")
+                });
+            }
+            setDeleteLoading(false);
+            navigate('/products')
         }
-        const productdoc = doc(db, "product_collections", productId);
-        await deleteDocument(productdoc);
-        if (product?.imageName) {
-            const desertRef = ref(storage, `images/${product.imageName}`);
-            deleteObject(desertRef).then(async (data) => {
-                console.log(data)
-            }).catch((error) => {
-                setImageLoading(false);
-                message.error("Image is not removed")
-            });
-        }
-        setDeleteLoading(false);
-        navigate('/products')
     }
 
     const handleUploadImage = async ({ fileList }) => {

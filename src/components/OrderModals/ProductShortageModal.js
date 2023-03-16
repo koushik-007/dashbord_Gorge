@@ -28,11 +28,11 @@ const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource}) => {
     const data = useMemo(()=> {
         const data = dataSource.map((item, index) => {
             if (item?.isBundle) {
-                const {bundleName, stock, quantity} = item;
+                const {bundleName, stock, quantity, pickedUp} = item;
                 return {
                     key: index,
                     product: bundleName,
-                    issue: <span>{Math.abs(stock - quantity)} short</span>,
+                    issue: <span>{Math.abs(stock - (pickedUp + quantity))} short</span>,
                     isBundle: true
                 }
             }
@@ -40,7 +40,7 @@ const ProductShortageModal = ({isShowModal, setIsShowModal, dataSource}) => {
              return {
                 key: index,
                 product: product_name,
-                issue: <span>{Math.abs(stock - quantity)} short</span>,
+                issue: <span>{Math.abs(stock - (pickedUp + quantity))} short</span>,
                 isBundle: false,
                 rest
             }
