@@ -271,11 +271,11 @@ const AddOrder = ({ oData }) => {
                 :
                 null
             }
-            <div className='order-btn-options'>
+            {/* <div className='order-btn-options'>
               <Dropdown overlayClassName='order-btn-options-dropdown' menu={{ items }} trigger={['click']} arrow={true}>
                 <Button icon={<DashOutlined />} size='large' />
               </Dropdown>
-            </div>
+            </div> */}
 
           </div>
         </div>

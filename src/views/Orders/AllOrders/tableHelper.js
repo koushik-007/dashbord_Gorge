@@ -30,7 +30,7 @@ export const columns = [
     width: 130,
     clssName: 'status',
     render: (text) => {
-      return <button className={text.toLowerCase().split(" ")[0] } >{text}</button>
+      return <button className={text.toLowerCase().split(" ")[0] } >{text.charAt(0).toUpperCase() + text.slice(1)}</button>
     }
   },
   {

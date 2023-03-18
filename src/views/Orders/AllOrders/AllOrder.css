@@ -3,7 +3,7 @@
 }
 
 .reserved,
-.concept, .picked, .mixed, .returned, .archived {
+.concept, .picked, .mixed, .returned, .archived, .canceled {
     display: inline-block;
     border-radius: 18px;
     padding: 6px 18px;
@@ -22,7 +22,7 @@
     background: rgb(43, 128, 255);
 }
 
-.concept {
+.concept, .canceled {
     background: rgb(191, 197, 203);
     border: 1px solid rgb(191, 197, 203);
 }

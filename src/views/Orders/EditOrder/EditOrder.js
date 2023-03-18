@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Dropdown, Layout, Row, Typography } from 'antd';
+import { Button, Col, Dropdown, Layout, Popover, Row, Typography } from 'antd';
 import { DashOutlined, LockOutlined, DeleteOutlined } from "@ant-design/icons";
 import { FaLevelUpAlt } from 'react-icons/fa';
 import Header from '../../../components/Header';
@@ -20,6 +20,7 @@ import "./EditOrder.css"
 import ProductShortageModal from '../../../components/OrderModals/ProductShortageModal';
 import RightSideBar from '../../../components/RightSideBar/RightSideBar';
 import BundleAddTable from '../../../components/BundleAddTable/BundleAddTable';
+import CancelOrderModal from '../../../components/OrderModals/CancelOrderModal';
 
 
 const { Title } = Typography;
@@ -49,7 +50,7 @@ const EditOrder = () => {
   const orderBundleRef = collection(db, "orders_collections", orderId, "bundles");
   const customInfoRef = collection(db, "orders_collections", orderId, 'customInformation');
   const [archivedLoading, setArhivedLoading] = useState(false);
-
+  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const handleDate = async (dateString) => {
     if (dateString[0]?.length > 0) {
       const newData = { rentalPeriod: dateString }
@@ -64,6 +65,9 @@ const EditOrder = () => {
   }
 
   const getOrderData = async () => {
+    setLoading(true)
+    setProductsData([]);
+    setBundleData([]);
     const data = await getAData(orderRef);
     setOrderData(data);
     setPickupNReturnDate(data?.rentalPeriod ? data?.rentalPeriod : []);
@@ -93,10 +97,19 @@ const EditOrder = () => {
     getCustomInfo();
   }, []);
   const handleorderStatus = async (status) => {
-    const isShortage = productsData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept');
-    const isShortageBundle = bundleData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept');
-    if (isShortage.length > 0 || isShortageBundle.length > 0) {
-      setShortageProducts([...isShortage, ...isShortageBundle]);
+    let isShortage = [];
+    productsData.forEach((data) => {
+      if (data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept') {
+        isShortage.push({ ...data, isBundle: false });
+      }
+    });
+    bundleData.forEach((data) => {
+      if (data.stock - (data?.pickedUp + data.quantity) < 0 && status !== 'Concept') {
+        isShortage.push({ ...data, isBundle: true });
+      }
+    });
+    if (isShortage.length > 0) {
+      setShortageProducts(isShortage);
       return seIsOpenShortageModal(true);
     }
 
@@ -123,6 +136,7 @@ const EditOrder = () => {
       setLoadingProductTable(false);
     }
   }
+
   const handleArchivedOrder = async () => {
     setArhivedLoading(true);
     await updateDoc(orderRef, { status: "archived" });
@@ -196,7 +210,7 @@ const EditOrder = () => {
     setLoadingProductTable(false);
   };
 
-  
+
   const [items, setItems] = useState(0);
 
   const calculateItems = (data, bundleData) => {
@@ -227,7 +241,7 @@ const EditOrder = () => {
     }
     if (concept.length === productsData.length && bundleconcept.length === bundleData.length) {
       setOrderData((curr) => ({ ...curr, status: 'Concept' }));
-      await updateDoc(orderRef, { status: 'concept' });
+      await updateDoc(orderRef, { status: 'Concept' });
       return;
     }
     if (returned.length === productsData.length && bundlereturned.length === bundleData.length) {
@@ -243,9 +257,54 @@ const EditOrder = () => {
   }
   useEffect(() => {
     calculateItems(productsData, bundleData);
-    setStatus();
+    if (orderData?.status === "Picked up" || orderData?.status === "Reserved" || orderData?.status === "Concept" || orderData?.status === "returned" || orderData?.status === "Mixed") {
+      setStatus();
+    }
   }, [productsData, bundleData]);
 
+  async function handleReverts(status) {
+    setOrderData((curr) => ({ ...curr, status }));
+    await updateDoc(orderRef, { status });
+    for (let i = 0; i < productsData.length; i++) {
+      const { orderProductsId, variationId, productId, quantity } = productsData[i];
+      const productDocRef = doc(db, "orders_collections", orderId, "products", orderProductsId);
+      const productData = await getAData(productDocRef);
+      if (status === "Picked up") {
+        const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
+        const data = await getAData(variationDoc);
+        let pickedUp = parseFloat(data?.pickedUp) + parseFloat(quantity)
+        await updateDoc(variationDoc, { pickedUp });
+      }
+      else if (productData?.status === "Picked up") {        
+        const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
+        const data = await getAData(variationDoc);
+        let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
+        await updateDoc(variationDoc, { pickedUp: returned });
+      }
+      await updateDoc(productDocRef, { status })
+    }
+    for (let i = 0; i < bundleData.length; i++) {
+      const { orderBundleId, bundleId, quantity } = bundleData[i];
+      const bundleDocRef = doc(db, "orders_collections", orderId, "bundles", orderBundleId);
+      const bundleD = await getAData(bundleDocRef);
+      if (status === "Picked up") {
+        const bundleDoc = doc(db, "bundles_collections", bundleId);
+        const data = await getAData(bundleDoc);
+        let pickedUp = parseFloat(data?.pickedUp) +  parseFloat(quantity)
+        await updateDoc(bundleDoc, { pickedUp });
+      }
+      if (bundleD?.status === "Picked up") {        
+        const bundleDoc = doc(db, "bundles_collections", bundleId);
+        const data = await getAData(bundleDoc);
+        let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
+        await updateDoc(bundleDoc, { pickedUp: returned });
+      }
+      await updateDoc(bundleDocRef, { status }) 
+    }
+    setProductsData([]);
+    setBundleData([]);
+    getOrderData();
+  }
   return (
     <>
       {
@@ -262,10 +321,8 @@ const EditOrder = () => {
                   <button className={orderData?.status.toLowerCase().split(" ")[0]} > {orderData?.status === "Mixed" ? null : items > 0 && items} {orderData?.status}</button>
                 </div>
                 <div className='order-btn'>
-
-
                   {
-                    pickupNReturnDate?.length > 0 &&
+                    pickupNReturnDate?.length > 0 && !(orderData?.status === "Canceled") &&
                     <>
                       {
                         orderData?.status === 'Concept' &&
@@ -273,10 +330,10 @@ const EditOrder = () => {
                       }
                       {
                         productsData.length > 0 || bundleData.length > 0 ?
-                        productsData.filter(({ status }) => status === "Reserved").length > 0 || bundleData.filter(({ status }) => status === "Reserved").length > 0 ?
-                          <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
-                          :
-                          null
+                          productsData.filter(({ status }) => status === "Reserved").length > 0 || bundleData.filter(({ status }) => status === "Reserved").length > 0 ?
+                            <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
+                            :
+                            null
                           :
                           null
                       }
@@ -301,29 +358,39 @@ const EditOrder = () => {
                         items: [
                           {
                             label: 'Revert to concept',
-                            key: '1',
-                            disabled: orderData?.status === 'Concept' || orderData?.status === 'picked up'
+                            key: 'Concept',
+                            disabled: orderData?.status === 'Concept' || orderData?.status === 'Canceled'
                           },
                           {
                             label: 'Revert to reserved',
-                            key: '2',
-                            disabled: !(orderData?.status === 'Reserve')
+                            key: 'Reserved',
+                            disabled: orderData?.status === 'Reserved' || orderData?.status === 'Canceled' || orderData?.status === 'Concept'
                           },
                           {
-                            label: 'Revert to reserved',
-                            key: '3',
-                            disabled: !(orderData?.status === 'Concept')
+                            label: 'Revert to picked up',
+                            key: 'Picked up',
+                            disabled: orderData?.status === 'Canceled' ? true : !(orderData?.status === 'returned') && !(orderData?.status === 'archived')
                           },
                           {
-                            label: 'Revert to reserved',
-                            key: '4',
-                            disabled: !(orderData?.status === 'Concept')
+                            label: 'Revert to returned',
+                            key: 'returned',
+                            disabled: orderData?.status === 'Canceled' ? true : orderData?.status !== 'archived'
                           },
                           {
-                            label: 'Cancel order',
+                            type: 'divider',
+                          },
+                          {
+                            label: orderData?.status === 'Concept' || orderData?.status === 'Reserved' ?
+                              <Button onClick={() => setIsCancelModalOpen(true)} type='text'> Cancel order</Button>
+                              :
+                              <Popover destroyTooltipOnHide={{ keepParent: false }} content="You can't cancel picked up/returned orders" placement='bottom'>
+                                <Button disabled type='text'> Cancel order</Button>
+                              </Popover>,
                             key: '5',
+
                           }
-                        ]
+                        ],
+                        onClick: ({ key }) => { handleReverts(key); }
                       }} trigger={['click']} arrow>
                       <Button icon={<DashOutlined />} size='large' />
                     </Dropdown>
@@ -348,8 +415,8 @@ const EditOrder = () => {
                   setShowInfoModal={setShowInfoModal}
                 />
                 <Col span={24} xs={24} style={{ paddingBottom: '5rem' }}>
-                  <div className='product-box'>
-                    <div className="product-info">
+                  <div className={`product-box ${orderData?.status === "Canceled" ? 'disbale-product' : ''}`}>
+                    <div className='product-info'>
                       <ProductSearch handleAddProductData={handleAddProductData} handleAddBundleData={handleAddBundleData} showProducts={showProducts} setShowProducts={setShowProducts} />
                       {
                         productsData.length > 0 || bundleData.length > 0 ?
@@ -406,7 +473,7 @@ const EditOrder = () => {
               setIsShowModal={seIsOpenShortageModal}
               dataSource={shortageProducts}
             />
-            <PickupModal              
+            <PickupModal
               showPickupModal={showPickupModal}
               setShowPickupModal={setShowPickupModal}
               productsData={productsData.filter(({ status }) => status !== "Picked up" && status !== "returned")}
@@ -419,7 +486,7 @@ const EditOrder = () => {
               setLoadingProductTable={setLoadingProductTable}
             />
             <PickupModal
-              isReturn={true}              
+              isReturn={true}
               showPickupModal={showReturnModal}
               setShowPickupModal={setShowReturnModal}
               productsData={productsData.filter(({ status }) => status === "Picked up")}
@@ -430,6 +497,12 @@ const EditOrder = () => {
               setProductsData={setProductsData}
               getOrderData={getOrderData}
               setLoadingProductTable={setLoadingProductTable}
+            />
+            <CancelOrderModal
+              orderRef={orderRef}
+              isModalVisible={isCancelModalOpen}
+              setIsModalVisible={setIsCancelModalOpen}
+              setOrderData={setOrderData}
             />
           </>
       }

@@ -50,6 +50,7 @@ const Orders = () => {
                     { label: "Upcoming", key: 'upcoming', children: <AllOrders activeKey={activeKey}/> },
                     { label: "Late", key: 'late', children: <AllOrders activeKey={activeKey}/>},
                     { label: "Archived", key: 'archived', children: <AllOrders activeKey={activeKey}/>},
+                    { label: "Canceled", key: 'canceled', children: <AllOrders activeKey={activeKey}/>},
                 ]}>                    
                 </Tabs>
             </Content>

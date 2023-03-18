@@ -26,7 +26,7 @@ const AllOrders = ({ activeKey }) => {
     const handleSelectAll = () => {
         data.map(({ key }) => setSelectedRowKeys((curr) => [key, ...curr]))
     }
-const [dataSource, setDataSource] = useState([])
+    const [dataSource, setDataSource] = useState([])
     useEffect(() => {
         setLoading(true);
         const getData = async () => {
@@ -66,11 +66,20 @@ const [dataSource, setDataSource] = useState([])
 
     const filterData = useMemo(() => {
         if (activeKey === 'all') {
-            const filter = dataSource.filter((item) => !(item.status === "archived"))
+            const filter = dataSource.filter((item) => {
+                if (item.status === "archived" || item.status === "Canceled") {
+                    return false
+                }
+                return true
+            })
             return filter;
         }
         if (activeKey === 'archived') {
             const filter = dataSource.filter((item) => item.status === "archived")
+            return filter;
+        }
+        if (activeKey === 'canceled') {
+            const filter = dataSource.filter((item) => item.status === "Canceled")
             return filter;
         }
         if (activeKey === 'upcoming') {
@@ -79,6 +88,9 @@ const [dataSource, setDataSource] = useState([])
         }
         if (activeKey === 'late') {
             const filter = dataSource.filter((item) => {
+                if (item.status === "Canceled" || item.status === "archived") {
+                    return false;
+                }
                 if (item.return === "No date") {
                     return false
                 }
@@ -112,7 +124,7 @@ const [dataSource, setDataSource] = useState([])
                             </div>
                         :
                         <div>
-                            <div className='head_table'>
+                            {/* <div className='head_table'>
                                 <Menu items={items} disabled={!selectedRowKeys.length > 0} type="text" />
                                 <p>{selectedRowKeys.length} products selected</p>
                                 {
@@ -121,7 +133,7 @@ const [dataSource, setDataSource] = useState([])
                                         :
                                         <p onClick={() => setSelectedRowKeys([])}>Clear selection</p>
                                 }
-                            </div>
+                            </div> */}
                             <Table
                                 className='ordertable'
                                 size='middle'
