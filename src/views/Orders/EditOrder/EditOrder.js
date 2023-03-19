@@ -263,6 +263,9 @@ const EditOrder = () => {
   }, [productsData, bundleData]);
 
   async function handleReverts(status) {
+    if (status === 'cancel') {
+      return setIsCancelModalOpen(true)
+    }
     setOrderData((curr) => ({ ...curr, status }));
     await updateDoc(orderRef, { status });
     for (let i = 0; i < productsData.length; i++) {
@@ -381,13 +384,13 @@ const EditOrder = () => {
                           },
                           {
                             label: orderData?.status === 'Concept' || orderData?.status === 'Reserved' ?
-                              <Button onClick={() => setIsCancelModalOpen(true)} type='text'> Cancel order</Button>
+                              <Button type='text'> Cancel order</Button>
                               :
                               <Popover destroyTooltipOnHide={{ keepParent: false }} content="You can't cancel picked up/returned orders" placement='bottom'>
                                 <Button disabled type='text'> Cancel order</Button>
                               </Popover>,
-                            key: '5',
-
+                            key: 'cancel',
+                            disabled: !orderData?.status === 'Concept' && !orderData?.status === 'Reserved'
                           }
                         ],
                         onClick: ({ key }) => { handleReverts(key); }
