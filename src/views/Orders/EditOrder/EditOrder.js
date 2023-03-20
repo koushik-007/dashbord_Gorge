@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Dropdown, Layout, Popover, Row, Typography } from 'antd';
-import { DashOutlined, LockOutlined, DeleteOutlined } from "@ant-design/icons";
+import { DashOutlined, LockOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { FaLevelUpAlt } from 'react-icons/fa';
 import Header from '../../../components/Header';
 import { collection, doc, setDoc, updateDoc } from 'firebase/firestore';
@@ -21,6 +21,7 @@ import ProductShortageModal from '../../../components/OrderModals/ProductShortag
 import RightSideBar from '../../../components/RightSideBar/RightSideBar';
 import BundleAddTable from '../../../components/BundleAddTable/BundleAddTable';
 import CancelOrderModal from '../../../components/OrderModals/CancelOrderModal';
+import AddExtraModal from '../../../components/OrderModals/AddExtraModal';
 
 
 const { Title } = Typography;
@@ -51,6 +52,7 @@ const EditOrder = () => {
   const customInfoRef = collection(db, "orders_collections", orderId, 'customInformation');
   const [archivedLoading, setArhivedLoading] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+  const [isOpenExtraModal, setIsOpenExtraModal] = useState(false);
   const handleDate = async (dateString) => {
     if (dateString[0]?.length > 0) {
       const newData = { rentalPeriod: dateString }
@@ -278,7 +280,7 @@ const EditOrder = () => {
         let pickedUp = parseFloat(data?.pickedUp) + parseFloat(quantity)
         await updateDoc(variationDoc, { pickedUp });
       }
-      else if (productData?.status === "Picked up") {        
+      else if (productData?.status === "Picked up") {
         const variationDoc = doc(db, "product_collections", productId, 'variations', variationId);
         const data = await getAData(variationDoc);
         let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
@@ -293,16 +295,16 @@ const EditOrder = () => {
       if (status === "Picked up") {
         const bundleDoc = doc(db, "bundles_collections", bundleId);
         const data = await getAData(bundleDoc);
-        let pickedUp = parseFloat(data?.pickedUp) +  parseFloat(quantity)
+        let pickedUp = parseFloat(data?.pickedUp) + parseFloat(quantity)
         await updateDoc(bundleDoc, { pickedUp });
       }
-      if (bundleD?.status === "Picked up") {        
+      if (bundleD?.status === "Picked up") {
         const bundleDoc = doc(db, "bundles_collections", bundleId);
         const data = await getAData(bundleDoc);
         let returned = parseFloat(data?.pickedUp) - parseFloat(quantity)
         await updateDoc(bundleDoc, { pickedUp: returned });
       }
-      await updateDoc(bundleDocRef, { status }) 
+      await updateDoc(bundleDocRef, { status })
     }
     setProductsData([]);
     setBundleData([]);
@@ -390,7 +392,7 @@ const EditOrder = () => {
                                 <Button disabled type='text'> Cancel order</Button>
                               </Popover>,
                             key: 'cancel',
-                            disabled: !orderData?.status === 'Concept' && !orderData?.status === 'Reserved'
+                            disabled: orderData?.status === 'Mixed' || orderData?.status === 'returned' || orderData?.status === 'Picked up' || orderData?.status === 'Canceled'
                           }
                         ],
                         onClick: ({ key }) => { handleReverts(key); }
@@ -456,7 +458,12 @@ const EditOrder = () => {
                       }
                     </div>
                     <div className="product-invoice">
-                      <OrderInvoic productsData={productsData} bundleData={bundleData} orderId={orderId} />
+                      <Row>
+                        <Col lg={12} xs={24}>
+                          <Button onClick={()=> setIsOpenExtraModal(true)} icon={<PlusOutlined />}>Add Extra</Button>
+                        </Col>
+                        <OrderInvoic productsData={productsData} bundleData={bundleData} orderId={orderId} />
+                      </Row>
                     </div>
                   </div>
                 </Col>
@@ -506,6 +513,11 @@ const EditOrder = () => {
               isModalVisible={isCancelModalOpen}
               setIsModalVisible={setIsCancelModalOpen}
               setOrderData={setOrderData}
+            />
+            <AddExtraModal 
+            orderId={orderId}
+            isOpenModal={isOpenExtraModal}
+             setIsOpenModal={setIsOpenExtraModal}
             />
           </>
       }

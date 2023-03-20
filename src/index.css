@@ -13,3 +13,9 @@ code {
     monospace;
 }
 
+
+:root{
+  --main-color: #11998e;
+  --text-color: #11425D;
+  --active: #38ef7d;
+  }

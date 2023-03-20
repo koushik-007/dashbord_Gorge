@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Button, Col, DatePicker, Row, Table } from 'antd';
+import { Button, Col, DatePicker, Row, Skeleton, Table } from 'antd';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { RentalPeriodProvider } from '../../context/RentalPeriodContext';
@@ -8,6 +8,8 @@ import "./ShopCartDetails.css";
 import { columns } from './tableHelper';
 import { CustomCell } from './CustomCell';
 import { CartWarningContextProvider } from '../../context/CartWarningContext';
+import { useMemo } from 'react';
+import Variants from '../Variants/Variants';
 
 const { RangePicker } = DatePicker;
 const { Column } = Table;
@@ -22,21 +24,47 @@ const ShopCartDetails = () => {
     const handlePeriod = (date, dateString) => {
         const diff = moment(dateString[1]).diff(moment(dateString[0]), 'days');
         setRentalPeriod({ rentalPeriod: dateString, dayCount: diff > 0 ? diff : 1 });
-    }
-    const [dataSource, setDataSource] = useState([]);
-
-    useEffect(() => {
-        const data = cartData.map(({ product_name, productCount, price, ...rest }) => {
+    } 
+    const [dataSource, setDataSource] = useState([])   
+     useEffect(()=> {
+        const data = cartData.map((item, index) => {
+            if (item?.isBundle) {
+                const {bundleName, productCount, price, imageUrl, stock, id } = item;
+                return {
+                    key: id,
+                    product: <div className="cart_table_product">
+                    {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}
+                    <div className="cart_table_product_details">
+                      <span>{bundleName}</span>
+                      <span>{stock} available</span>
+                    </div>
+                  </div>,
+                    price,
+                    quantity: productCount,
+                }
+            }
+            const { product_name, imageUrl, productCount, id, key, price, dayCount, stock, quantity, pickedUp,variationId,productId, taxProfile, isBundle, ...rest } = item;      
             return {
-                product: product_name,
+                key: id,
+                product: <div className="cart_table_product">
+                      {imageUrl ? <img src={imageUrl} alt="product" /> : <Skeleton.Image active={false} />}
+                      <div className="cart_table_product_details">
+                        
+                        <span>  
+                        <span>{product_name}</span> -          
+                          <Variants data={rest} dot={true} />
+                        </span>
+                        <span>{stock} available</span>
+                      </div>
+                    </div>
+                  ,
                 quantity: productCount,
                 price,
                 ...rest
             }
-        });
+        })
         setDataSource(data)
-    }, [cartData]);
-
+    }, [cartData])
     useEffect(() => {
         const amounts = cartData.map(data => data.productCount * parseFloat(data.price) * dayCount);
         var sub = amounts.reduce((a, b) => a + b, 0);

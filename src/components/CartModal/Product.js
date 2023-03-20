@@ -21,7 +21,7 @@ const CartModal = ({ isModalVisible, setIsModalVisible, selectedProduct, dayCoun
         const newData = [...cartData];
         const index = newData.findIndex(({ key }) => key === product.key);
         if (index === -1) {
-            const newcart = [...cartData, { ...product, product_name, imageUrl, productCount, variationId: product.id }];
+            const newcart = [...cartData, { ...product, product_name, imageUrl, productCount, variationId: product.id, isBundle: false  }];
             setCartData(newcart);           
         }
         else {

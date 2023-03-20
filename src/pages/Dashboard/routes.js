@@ -14,6 +14,7 @@ import EditOrder from "../../views/Orders/EditOrder/EditOrder";
 import PackingSlip from "../../components/PackingSlip/PackingSlip";
 import Documents from "../../views/Documents/Documents";
 import Invoices from "../../components/Invoices/Invoices";
+import SchoolInfo from "../../components/SchoolInfo/SchoolInfo";
 
 export const routes = [
     {
@@ -47,6 +48,10 @@ export const routes = [
     {
         path: '/documents/invoices/:orderId',
         component: <Invoices/>,
+    },
+    {
+        path: '/documents/schoolinfo/:orderId',
+        component: <SchoolInfo />
     },
     {
         path: '/Customers',

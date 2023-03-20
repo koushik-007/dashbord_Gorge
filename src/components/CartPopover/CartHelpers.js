@@ -23,10 +23,39 @@ export const Title = ({ set, rentalPeriod, showCross=true }) => {
 }
 
 export const Content = ({ data, handleProductCount, handleRemoveCart, rentalPeriod }) => {
-    const { product_name, bundleName,  imageUrl, productCount, id, key, price, dayCount, stock, pickedUp, variationId,productId, taxProfile,...rest  } = data;
+    if (data?.isBundle) {
+        const { bundleName, imageUrl, stock, productCount, price, dayCount } = data;
+        return <div className="product_list_item">
+        <Button onClick={() => handleRemoveCart(key)} type='text' size='small' icon={<ImCross />} />
+        <div className="product_list_line">
+            {
+                imageUrl ?
+                    <img src={imageUrl} alt='' />
+                    :
+                    <Skeleton.Image size={555} active={false} />
+            }
+            <div>
+                <span>
+                    <b>{bundleName}</b> &nbsp;
+                </span>
+                <br />
+                <span>{rentalPeriod.length === 2 ? stock ? `${stock} available` : 0 : null}</span>
+                <br /> 
+                <InputNumber 
+                defaultValue={productCount} 
+                onChange={(value) => handleProductCount(key, value)}
+                controls={{upIcon: <PlusOutlined/>, downIcon: <MinusOutlined/>}}
+                />
+            </div>
+        </div>
+        <div className="product_list_footer">
+            <span>{price * productCount * dayCount}</span>
+        </div>
+    </div>
+    }
+    const { product_name, bundleName,  imageUrl, productCount, id, key, price, dayCount, stock, pickedUp, variationId,productId, taxProfile, isBundle, ...rest  } = data;
     const variants = Object.keys(rest);       
     return (
-        <>
             <div className="product_list_item">
                 <Button onClick={() => handleRemoveCart(key)} type='text' size='small' icon={<ImCross />} />
                 <div className="product_list_line">
@@ -61,6 +90,5 @@ export const Content = ({ data, handleProductCount, handleRemoveCart, rentalPeri
                     <span>{price * productCount * dayCount}</span>
                 </div>
             </div>
-        </>
     )
 }

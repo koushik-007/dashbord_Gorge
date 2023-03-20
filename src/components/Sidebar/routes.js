@@ -4,7 +4,7 @@ import {
     FileOutlined,
     InboxOutlined,
     CalendarOutlined,
-    RightOutlined
+    LogoutOutlined
   } from '@ant-design/icons';
   import { FaRegUser } from "react-icons/fa";
   import { BiDockTop } from 'react-icons/bi'
@@ -44,26 +44,9 @@ export const routes = [
         popover: ['Products'],
         icon: <BiDockTop/>
     },
-    // {
-    //     path: '/arrow',
-    //     icon: <RightOutlined />,
-    //     popover: [
-    //         {
-    //             name:  'Reports',
-    //             icon: <PlusOutlined/>
-    //         },
-    //         {
-    //             name:  'Reports',
-    //             icon: <PlusOutlined/>
-    //         },
-    //         {
-    //             name:  'Reports',
-    //             icon: <PlusOutlined/>
-    //         },
-    //         {
-    //             name:  'Reports',
-    //             icon: <PlusOutlined/>
-    //         }
-    //     ]
-    // }
+    {
+        path: 'logout',
+        popover: ['Logout'],
+        icon: <LogoutOutlined />,
+    }
 ]

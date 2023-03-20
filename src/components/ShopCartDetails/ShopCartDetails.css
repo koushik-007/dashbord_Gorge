@@ -30,6 +30,10 @@
     height: 40px;
     border-radius: 6px;
 }
+.cart_table_product .ant-skeleton-element .ant-skeleton-image{
+    height: 42px !important;
+    width: 42px !important;
+}
 .cart_table_product .cart_table_product_details{
     margin-left: 15px;
     display: flex;

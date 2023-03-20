@@ -48,9 +48,17 @@ const Checkout = () => {
             const res = await addDocumentData(orderCollectionRef, orderData);
             if (res.id) {
                 const orderedProductsRef = collection(db, "orders_collections", res.id, "products");
+                const orderBundleRef = collection(db, "orders_collections", res.id, "bundles");
                 cartData.forEach(async (obj) => {
-                    const { productId, variationId, productCount, price, product_name, imageUrl } = obj;
-                    await addDocumentData(orderedProductsRef, { product_name, imageUrl, productId, variationId, quantity: productCount, dayCount: rentalPeriod?.dayCount, charge: rentalPeriod?.dayCount * price, status: 'Reserved', });
+                    if (obj?.isBundle) {
+                        const { id, productCount, price } = obj;
+                        const bundleInfo = { bundleId: id, quantity: productCount, dayCount: rentalPeriod?.dayCount, charge: rentalPeriod?.dayCount * price, status: 'Reserved' }
+                         await addDocumentData(orderBundleRef, bundleInfo);
+                    }
+                    else {
+                        const { productId, variationId, productCount, price, product_name, imageUrl } = obj;
+                        await addDocumentData(orderedProductsRef, { product_name, imageUrl, productId, variationId, quantity: productCount, dayCount: rentalPeriod?.dayCount, charge: rentalPeriod?.dayCount * price, status: 'Reserved', });
+                    }
                 })
                 setIsSuccess(true);
             }
@@ -66,9 +74,9 @@ const Checkout = () => {
                 }
             })
             const resy = sendmail.json();
-            
-                // .then(response => response.json())
-                // .then(json => console.log(json));
+
+            // .then(response => response.json())
+            // .then(json => console.log(json));
             setLoading(false);
         } catch (error) {
             setIsSuccess(false)
@@ -102,9 +110,24 @@ const Checkout = () => {
                     <Title rentalPeriod={rentalPeriod?.rentalPeriod} showCross={false} />
                 </div>
                 {
-                    cartData.map(({ product_name, imageUrl, productCount, key, price, id, stock, pickedUp, variationId, productId, taxProfile, ...rest }) => {
+                    cartData.map((item) => {
+                        if (item?.isBundle) {
+                            const { bundleName, imageUrl, key, productCount, price } = item;
+                            return (
+                                <div className="checkout_products" key={key}>
+                                    <div className="checkout_products_details">
+                                        <span>
+                                            {imageUrl ? <img src={imageUrl} alt='' /> : <Skeleton.Image active={false} />}
+                                        </span>
+                                        <span style={{ marginLeft: '13px' }}>{productCount}x</span>
+                                        <span>{bundleName}</span>
+                                        <span>{price * productCount * rentalPeriod.dayCount}</span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        const { product_name, imageUrl, productCount, key, price, id, stock, pickedUp, variationId, productId, taxProfile, isBundle, ...rest } = item;
                         return (
-
                             <div className="checkout_products" key={key}>
                                 <div className="checkout_products_details">
                                     <span>

@@ -28,26 +28,6 @@ const OrderInvoic = ({ productsData, orderId, bundleData }) => {
     subTotal();
   }, [productsData, bundleData]);
   return (
-    <Row>
-      <Col lg={12} xs={24}>
-        <div className="custom-dropdown">
-          <span onClick={() => setShowDropdown(!showDropdown)} onBlur={() => setShowDropdown(!showDropdown)}>
-            <button label="Add custom line" type="button" >
-              <span>Add custom line</span>
-              {
-                showDropdown ? <UpOutlined /> : <DownOutlined />
-              }
-            </button>
-          </span>
-          {
-            showDropdown &&
-            <div width="168px" className="options">
-              <span className="option">Charge</span>
-              <span className="option">Section</span>
-            </div>
-          }
-        </div>
-      </Col>
       <Col lg={12} xs={24}>
         <div className="calculation-box">
           <div className="calculation-details">Subtotal</div>
@@ -74,7 +54,6 @@ const OrderInvoic = ({ productsData, orderId, bundleData }) => {
           </div>
         </div>
       </Col>
-    </Row>
   );
 };
 

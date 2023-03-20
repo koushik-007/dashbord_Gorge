@@ -11,7 +11,7 @@ export const CustomCell = ({ record, children, dataIndex, dayCount, ...restProps
         setCartData(newcart);
     }
     const handleProductCount = (value) => {
-        if (value == 0) {
+        if (value === 0) {
            return handleRemoveCart(record.key);
         }
         const newData = [...cartData];

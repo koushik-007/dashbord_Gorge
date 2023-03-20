@@ -18,13 +18,13 @@ const Bundle = ({ isModalVisible, setIsModalVisible, selectedProduct, dayCount, 
         const newData = [...cartData];
         const index = newData.findIndex(({ key }) => key === bundle.key);
         if (index === -1) {
-            const newcart = [...cartData, { ...bundle, productCount, price }];
+            const newcart = [...cartData, { ...bundle, productCount, price, isBundle: true }];
             setCartData(newcart);
         }
         else {
             const item = newData[index];
             let count = item.productCount + productCount;
-            newData.splice(index, 1, { ...item, productCount: count });
+            newData.splice(index, 1, { ...item, productCount: count, isBundle: true  });
             setCartData(newData);
         }
         setIsModalVisible(false)

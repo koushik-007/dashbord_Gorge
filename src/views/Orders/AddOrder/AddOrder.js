@@ -1,12 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Button, Dropdown, Layout, Typography, Row, Col } from 'antd';
-import { SaveOutlined, DashOutlined, LockOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Layout, Typography, Row, Col } from 'antd';
+import { SaveOutlined, LockOutlined, PlusOutlined } from '@ant-design/icons';
 import { FaLevelUpAlt } from 'react-icons/fa';
 import { collection, doc, updateDoc } from 'firebase/firestore';
 import { addDocumentData, db, getAData, getAllData } from '../../../Firebasefunctions/db';
 import Header from '../../../components/Header';
 import "./AddOrder.css";
-import { items } from './items';
 import { Link, useNavigate } from 'react-router-dom';
 import CustomerForm from '../../../components/Orderforms/CustomerForm';
 import CustomInfoAdd from '../../../components/Orderforms/CustomInfoAdd';
@@ -26,7 +25,7 @@ const { Title } = Typography;
 const { Content } = Layout;
 
 const AddOrder = ({ oData }) => {
-  const { price, setPrice } = useContext(PriceContextProvider);
+  const { price } = useContext(PriceContextProvider);
   let navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [pickupNReturnDate, setPickupNReturnDate] = useState([]);
@@ -66,37 +65,37 @@ const AddOrder = ({ oData }) => {
     setOrderData((curr) => ({ ...curr, ...customerData }));
   }
   const ordersCollectionsRef = collection(db, "orders_collections");
-  
+
   async function createOrder(status) {
-      const data = await getAllData(ordersCollectionsRef);
-      const orderPicks = pickupNReturnDate.length > 0 ? pickupNReturnDate : '';
-      const order = { ...orderData, rentalPeriod: orderPicks, status, price, orderNumber: data?.length + 1, amount: 0, secuirityDeposit: 0 }
-      const res = await addDocumentData(ordersCollectionsRef, order);
-      const { id } = res;
-      if (customInformation.length > 0) {
-        const customInfoRef = collection(db, "orders_collections", id, 'customInformation');
-        for (let i = 0; i < customInformation.length; i++) {
-          const info = customInformation[i];
-          await addDocumentData(customInfoRef, info);
-        }
+    const data = await getAllData(ordersCollectionsRef);
+    const orderPicks = pickupNReturnDate.length > 0 ? pickupNReturnDate : '';
+    const order = { ...orderData, rentalPeriod: orderPicks, status, price, orderNumber: data?.length + 1, amount: 0, secuirityDeposit: 0 }
+    const res = await addDocumentData(ordersCollectionsRef, order);
+    const { id } = res;
+    if (customInformation.length > 0) {
+      const customInfoRef = collection(db, "orders_collections", id, 'customInformation');
+      for (let i = 0; i < customInformation.length; i++) {
+        const info = customInformation[i];
+        await addDocumentData(customInfoRef, info);
       }
-      if (productsData.length > 0) {
-        const productRef = collection(db, "orders_collections", id, 'products');
-        for (let i = 0; i < productsData.length; i++) {
-          const { product_name, imageUrl, productId, variationId, quantity, dayCount, charge } = productsData[i];
-          await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status });
-        }
+    }
+    if (productsData.length > 0) {
+      const productRef = collection(db, "orders_collections", id, 'products');
+      for (let i = 0; i < productsData.length; i++) {
+        const { product_name, imageUrl, productId, variationId, quantity, dayCount, charge } = productsData[i];
+        await addDocumentData(productRef, { product_name, imageUrl, productId, variationId, quantity, dayCount, charge, status });
       }
-      if (bundleData.length > 0) {
-        for (let i = 0; i < bundleData.length; i++) {
-          const orderBundleDocRef = collection(db, "orders_collections", res?.id, 'bundles');
-          const { bundleId, quantity, dayCount, charge } = bundleData[i];
-            const bundleInfo = { bundleId, quantity, dayCount, charge, status }
-            await addDocumentData(orderBundleDocRef, bundleInfo);              
-          }
-        }        
-      navigate(`/orders/${id}`)
-      setLoading(false);
+    }
+    if (bundleData.length > 0) {
+      for (let i = 0; i < bundleData.length; i++) {
+        const orderBundleDocRef = collection(db, "orders_collections", res?.id, 'bundles');
+        const { bundleId, quantity, dayCount, charge } = bundleData[i];
+        const bundleInfo = { bundleId, quantity, dayCount, charge, status }
+        await addDocumentData(orderBundleDocRef, bundleInfo);
+      }
+    }
+    navigate(`/orders/${id}`)
+    setLoading(false);
   }
   const handleCreateOrder = async (status) => {
     try {
@@ -104,7 +103,7 @@ const AddOrder = ({ oData }) => {
       const isShortage = productsData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0);
       const isShortageBundle = bundleData.filter((data) => data.stock - (data?.pickedUp + data.quantity) < 0);
       if (isShortage.length > 0 || isShortageBundle.length > 0) {
-      if (status === 'Reserved') {
+        if (status === 'Reserved') {
           setShortageProducts([...isShortage, ...isShortageBundle]);
           setLoading(false);
           return seIsOpenShortageModal(true);
@@ -238,7 +237,7 @@ const AddOrder = ({ oData }) => {
       navigate(`/orders/${res?.id}`)
     }
   }
-  
+
   return (
     <>
       <Header>
@@ -258,7 +257,7 @@ const AddOrder = ({ oData }) => {
               pickupNReturnDate.length > 0 ?
                 <>
                   {
-                    productsData.length > 0 || bundleData.length > 0?
+                    productsData.length > 0 || bundleData.length > 0 ?
                       <div className='reserveNPickup'>
                         <Button icon={<LockOutlined />} loading={loading} type='primary' size='large' onClick={() => handleCreateOrder('Reserved')}>Reserve</Button>
                         <Button icon={<FaLevelUpAlt />} type='primary' danger size='large' onClick={() => setShowPickupModal(true)}> Pick up items</Button>
@@ -334,7 +333,11 @@ const AddOrder = ({ oData }) => {
                     }
                   </div>
                   <div className="product-invoice">
-                    <OrderInvoic productsData={productsData} bundleData={bundleData}/>
+                    <Row>
+                      <Col lg={12} xs={24}>
+                      </Col>
+                      <OrderInvoic productsData={productsData} bundleData={bundleData} />
+                    </Row>
                   </div>
                 </div>
               </Col>

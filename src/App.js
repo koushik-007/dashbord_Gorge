@@ -14,11 +14,15 @@ import { Spin } from 'antd';
 import { LoadingOutlined } from "@ant-design/icons";
 import VariationDataContext from './context/VariationDataContext';
 import CartWarningContext from './context/CartWarningContext';
+import Authentication from './pages/Authentication/Authentication';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import AuthContext from './context/AuthContext';
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
 const ShopCart = lazy(() => import('./pages/Shop/ShopCart'));
 
 function App() {
   return (
+    <AuthContext>
     <AllOrderDataContext>
       <PriceContext>
         <ShopCartContext>
@@ -28,7 +32,11 @@ function App() {
                 <BrowserRouter>
                   <Suspense fallback={<Spin className='fallback' indicator={<LoadingOutlined spin />} />}>
                     <Routes>
-                      <Route exact path="/*" element={<Dashboard />} />
+                      <Route path="/*" element={
+                      <PrivateRoute>
+                        <Dashboard />
+                      </PrivateRoute>} />
+                      <Route exact path="/auth" element={<Authentication />} />
                       <Route exact path="/shop/*" element={<ShopCart />} />
                     </Routes>
                   </Suspense>
@@ -39,6 +47,7 @@ function App() {
         </ShopCartContext>
       </PriceContext>
     </AllOrderDataContext>
+    </AuthContext>
   );
 }
 

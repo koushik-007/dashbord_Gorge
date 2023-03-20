@@ -2,10 +2,12 @@ import { Collapse, Layout } from 'antd';
 import "./Dashboard.css";
 import Header from '../Header'
 import { Typography } from 'antd';
+
 const { Panel } = Collapse;
 const { Content, } = Layout;
 const {Title} = Typography;
 const Dashboard = () => {
+    
     const onChange = (key) => {
         console.log(key);
     };
