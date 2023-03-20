@@ -26,22 +26,22 @@ const SocialNetwork = () => {
             message.error("please try with another mail");
         });
     }
-    async function signinWithApple() {
-        handleSignInWithApple().then((res) => {
-            if (res?.email) {
-                message.info(
-                    {
-                        content: <div>
-                            Successfully Signin
-                        </div>,
-                        className: 'notify_saved_customer',           
-                    }); 
-                navigate(from, { replace: true });
-            }
-        }).catch((error) => {
-            message.error("please try with another mail");
-        });
-    }
+    // async function signinWithApple() {
+    //     handleSignInWithApple().then((res) => {
+    //         if (res?.email) {
+    //             message.info(
+    //                 {
+    //                     content: <div>
+    //                         Successfully Signin
+    //                     </div>,
+    //                     className: 'notify_saved_customer',           
+    //                 }); 
+    //             navigate(from, { replace: true });
+    //         }
+    //     }).catch((error) => {
+    //         message.error("please try with another mail");
+    //     });
+    // }
     return (
         <div className="social-container">
             <Tooltip
@@ -55,7 +55,7 @@ const SocialNetwork = () => {
                 </Button>
             </Tooltip>
 
-            <Tooltip
+            {/* <Tooltip
                 title="Signin with Apple"
                 placement="bottom"
                 color="#7c8081"
@@ -64,7 +64,7 @@ const SocialNetwork = () => {
                 <div className="social Apple">
                     <AppleFilled />
                 </div>
-            </Tooltip>
+            </Tooltip> */}
         </div>
     );
 };
