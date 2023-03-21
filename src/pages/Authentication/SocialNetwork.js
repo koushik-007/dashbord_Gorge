@@ -1,26 +1,14 @@
 import React, { memo, useContext } from 'react';
 import { Button, message, Tooltip } from 'antd';
-import { AppleFilled } from "@ant-design/icons";
 import { FcGoogle } from "react-icons/fc";
-import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContextProvider } from '../../context/AuthContext';
-const SocialNetwork = () => {
+const SocialNetwork = ({checkAdmin}) => {
     const { handleSigninWithGmail, handleSignInWithApple } = useContext(AuthContextProvider);
-    const navigate = useNavigate();
-    let location = useLocation();
-    let from = location.state?.from?.pathname || "/dashboard";
     
     async function signinWithGmail() {
         handleSigninWithGmail().then((res) => {
             if (res?.email) {
-                message.info(
-                    {
-                        content: <div>
-                            Successfully Signin
-                        </div>,
-                        className: 'notify_saved_customer',           
-                    }); 
-                navigate(from, { replace: true });
+                checkAdmin(res?.email, "Successfully Signin")                               
             }
         }).catch((error) => {
             message.error("please try with another mail");

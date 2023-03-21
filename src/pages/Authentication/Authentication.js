@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { Button, Grid, Typography } from 'antd';
+import { Button, Grid, message, Typography } from 'antd';
 import { SelectOutlined } from "@ant-design/icons";
 import './Authentication.css';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContextProvider } from '../../context/AuthContext';
 const { useBreakpoint } = Grid;
 const { Link } = Typography;
 
 const Authentication = () => {
+  const { logout } = useContext(AuthContextProvider);
   const screens = useBreakpoint();
   const [isPanelRightActive, setIsPanelRightActive] = useState(false);
   const switchMode = () => {
@@ -20,21 +24,45 @@ const Authentication = () => {
   const handleClickSignUp = () => {
     setIsPanelRightActive(true);
   };
+  const navigate = useNavigate();
+  let location = useLocation();
+
+  let from = location.state?.from?.pathname || "/dashboard";
+  async function checkAdmin(email, text) {
+    const adminEmails = [
+      'test@test.com',
+      'test@gmail.com'
+    ];
+    if (adminEmails.includes(email)) {
+      message.info(
+        {
+          content: <div>{text}</div>,
+          className: 'notify_saved_customer',
+        });
+      navigate(from, { replace: true });
+    }
+    await logout()
+    message.info(
+      {
+        content: <div>Not Admin</div>,
+        className: 'notify_saved_customer',
+      });
+    navigate('/shop', {replace: true})
+  }
   return (
     <div className="auth-page">
-          {
-            screens.sm ?
-            <div className="auth-page-wrapper">              
+      {
+        screens.sm ?
+          <div className="auth-page-wrapper">
             <div
-              className={`auth-container ${
-                isPanelRightActive ? "right-panel-active" : ""
-              }`}
+              className={`auth-container ${isPanelRightActive ? "right-panel-active" : ""
+                }`}
             >
               <div className="form-container sign-up-container">
-                <SignUp />
+                <SignUp checkAdmin={checkAdmin}/>
               </div>
               <div className="form-container sign-in-container">
-                <SignIn />
+                <SignIn checkAdmin={checkAdmin} />
               </div>
 
               <div className="overlay-container">
@@ -91,9 +119,9 @@ const Authentication = () => {
               </>
             )}
           </div>
-          }
-          
-      </div>
+      }
+
+    </div>
   );
 };
 

@@ -33,20 +33,20 @@ const SchoolInfo = () => {
     const { orderId } = useParams();
     const [loading, setLoading] = useState(false);
     const [schoolinfo, setSchoolInfo] = useState({});
-    
+
     const schoolinfoDocRef = collection(db, "student_collections");
 
     const getSchoolData = async () => {
         setLoading(true);
         const q = query(schoolinfoDocRef, where("orderId", "==", orderId))
-        const data = await getAllData(q);        
+        const data = await getAllData(q);
         setSchoolInfo(data[0]);
         setLoading(false);
     }
-    const dataSource = useMemo(()=> {
-        const data = schoolinfo?.students?.map(({firstName, lastName, size}, index)=> ({
+    const dataSource = useMemo(() => {
+        const data = schoolinfo?.students?.map(({ firstName, lastName, size }, index) => ({
             key: index,
-            index: index+1,
+            index: index + 1,
             name: <span>{firstName} {lastName}</span>,
             size,
         }))
@@ -65,7 +65,7 @@ const SchoolInfo = () => {
         return componentRef.current;
     }, [componentRef.current]);
 
-    
+
     if (!loading) {
         return <>
             <Header>
@@ -74,10 +74,15 @@ const SchoolInfo = () => {
                         <Title>School Info </Title>
                     </div>
                     <div>
-                        <ReactToPrint
-                            trigger={reactToPrintTrigger}
-                            content={reactToPrintContent}
-                        />
+                        {
+                            schoolinfo?.schoolName ?
+                                <ReactToPrint
+                                    trigger={reactToPrintTrigger}
+                                    content={reactToPrintContent}
+                                />
+                                :
+                                <Button icon={<PrinterOutlined />} size="large">Print/Download</Button>
+                        }
                     </div>
                 </div>
             </Header>
@@ -91,21 +96,25 @@ const SchoolInfo = () => {
                                     <div>{schoolinfo?.teacherName}</div>
                                 </Col>
                                 <br />
-                                
+
                                 <Col span={24}>
                                     <br />
                                     {
-                                        schoolinfo?.students?.length > 0 &&
-                                        <Table
-                                        loading={loading}
-                                        pagination={false}
-                                        dataSource={dataSource}
-                                        columns={columns}
-                                    />
+                                        schoolinfo?.students?.length > 0 ?
+                                            <Table
+                                                loading={loading}
+                                                pagination={false}
+                                                dataSource={dataSource}
+                                                columns={columns}
+                                            />
+                                            :
+                                            <div className='addCustomer'>
+                                                <h1>You have no school info</h1>
+                                            </div>
                                     }
-                                    
+
                                 </Col>
-                                
+
                             </Row>
                         </div>
                     </Col>

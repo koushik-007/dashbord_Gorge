@@ -22,7 +22,6 @@ const AuthContext = ({ children }) => {
     auth.languageCode = 'it';
 
     onAuthStateChanged(auth, (currentuser) => {
-        console.log('click');
         setUser(currentuser);
         setIsAuthenticated(true);
         setIsAuthLoading(false)

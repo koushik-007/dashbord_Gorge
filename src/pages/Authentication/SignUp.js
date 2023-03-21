@@ -2,31 +2,20 @@ import React, { useContext, useState } from 'react';
 import { Button, Col, Form, Input, message, Row, Typography } from 'antd';
 import { UserAddOutlined } from '@ant-design/icons'
 import SocialNetwork from './SocialNetwork';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContextProvider } from '../../context/AuthContext';
 
 const { Title } = Typography;
-const SignUp = () => {
+const SignUp = ({checkAdmin}) => {
     const { signup } = useContext(AuthContextProvider);
     const [form] = Form.useForm();
-    const navigate = useNavigate();
-    let location = useLocation();
 
-    let from = location.state?.from?.pathname || "/dashboard";
     const [loading, setLoading] = useState(false);
     function onFinish(values) {
         setLoading(true);
         signup(values).then((res) => {
             if (res?.email) {
                 setLoading(false);
-                message.info(
-                    {
-                        content: <div>
-                            Successfully Sign up
-                        </div>,
-                        className: 'notify_saved_customer',           
-                    }); 
-                navigate(from, { replace: true });
+                checkAdmin(res?.email, "Successfully Sign up")                
             }
         }).catch((error) => {
             setLoading(false)
@@ -44,7 +33,7 @@ const SignUp = () => {
             <Title level={2} className="text-center">
                 Create Account
             </Title>
-            <SocialNetwork />
+            <SocialNetwork checkAdmin={checkAdmin} />
             <div className="option-text">or use your email for registration</div>
             <Form.Item
                 name="email"

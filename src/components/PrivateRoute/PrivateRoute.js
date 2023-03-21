@@ -12,7 +12,6 @@ function PrivateRoute({ children }) {
     if (!isAuthenticated || !user?.uid) {
         return <Navigate to="/auth" state={{ from: location }} replace />;
     }
-
     return children;
 }
 
