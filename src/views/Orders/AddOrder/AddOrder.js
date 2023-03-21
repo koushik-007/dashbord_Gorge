@@ -94,7 +94,7 @@ const AddOrder = ({ oData }) => {
         await addDocumentData(orderBundleDocRef, bundleInfo);
       }
     }
-    navigate(`/orders/${id}`)
+    navigate(`/dashboard/orders/${id}`)
     setLoading(false);
   }
   const handleCreateOrder = async (status) => {
@@ -234,7 +234,7 @@ const AddOrder = ({ oData }) => {
       }
       setPickupLoading(false);
       setShowPickupModal(false);
-      navigate(`/orders/${res?.id}`)
+      navigate(`/dashboard/orders/${res?.id}`)
     }
   }
 

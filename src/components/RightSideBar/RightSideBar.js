@@ -26,13 +26,13 @@ const RightSideBar = ({orderId}) => {
                             </NavLink>
                         </Panel>
                         <Panel header={<b>Invoices (1)</b>} key="2">
-                        <NavLink to={`/documents/invoices/${orderId}`} className="invoices_link">
+                        <NavLink to={`/dashboard/documents/invoices/${orderId}`} className="invoices_link">
                                 <HiOutlineDocumentDuplicate />
                                 <span>Pro forma</span>
                             </NavLink>                            
                         </Panel>
                         <Panel header={<b>School info (1)</b>} key="3">                        
-                            <NavLink to={`/documents/schoolinfo/${orderId}`} className="invoices_link">
+                            <NavLink to={`/dashboard/documents/schoolinfo/${orderId}`} className="invoices_link">
                                 <HiOutlineDocumentDuplicate />
                                 <span>School info</span>
                             </NavLink>

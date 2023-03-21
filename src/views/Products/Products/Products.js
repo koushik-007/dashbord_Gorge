@@ -24,7 +24,7 @@ const Products = () => {
                     <Col span={12} sm={20} md={16} lg={12}>
                         <Row>
                             <Col span={8}>
-                                <Title style={{ textTransform: "capitalize" }}>{pathname.slice(1, pathname.length)}</Title>
+                                <Title style={{ textTransform: "capitalize" }}>{pathname.split('/')[2]}</Title>
                             </Col>
                             <Col span={10}>
                                 <Input size="large" placeholder="Search" style={{ borderRadius: '7px' }} prefix={<SearchOutlined className='searchIcon' />} />
@@ -44,22 +44,22 @@ const Products = () => {
                                         icon: icon
                                     }))
                                 }}
-                                onClick={() => { navigate("/" + pathname.slice(1, pathname.length) + "/new") }}
+                                onClick={() => { navigate('new') }}
                                 trigger={['click']}
                                 type="primary"
                                 size='large'
                             >
-                                Add {pathname.slice(1, pathname.length)}
+                                Add {pathname.split('/')[2]}
                             </Dropdown.Button>
                         </div>
                     </Col>
                 </Row>
             </Header>
             <Content className='main_content'>
-                <Tabs defaultActiveKey="/products" activeKey={pathname} onChange={(key) => navigate(key)}
+                <Tabs defaultActiveKey="products" activeKey={pathname.split('/')[2]} onChange={(key) => navigate(`/dashboard/${key}`)}
                     items={[
-                        { label: "Products", key: "/products", children: <ProductsTable /> },
-                        { label: "Bundles", key: "/bundles", children: <BundlesTable /> },
+                        { label: "Products", key: "products", children: <ProductsTable /> },
+                        { label: "Bundles", key: "bundles", children: <BundlesTable /> },
                     ]} />
             </Content>
         </>

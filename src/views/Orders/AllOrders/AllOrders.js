@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Spin, Table } from 'antd';
-import { columns, items } from './tableHelper';
+import { columns } from './tableHelper';
 import './AllOrder.css';
 import TableCells from './TableCells';
 import { useContext } from 'react';
 import { AllOrderDataProvder } from '../../../context/AllOrderDataContext';
-import Menu from "../../../components/Menu"
+
 
 const { Column } = Table;
 

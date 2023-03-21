@@ -7,7 +7,7 @@ const TableCells = ({ record, routing, children, dataIndex, ...restProps }) => {
   let navigate = useNavigate();
 
   if (routing) {
-    return <td {...restProps} onClick={() => navigate(`/orders/${record.key}`)}>
+    return <td {...restProps} onClick={() => navigate(`${record.key}`)}>
       {children}
     </td >
   }

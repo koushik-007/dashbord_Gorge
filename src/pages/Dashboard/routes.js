@@ -22,71 +22,71 @@ export const routes = [
         component: <Dashboard/>,
     },
     {
-        path: '/orders',
+        path: 'orders',
         component: <Orders/>,
     },
     {
-        path: '/orders/new',
+        path: 'orders/new',
         component: <AddOrder/>,
     },
     {
-        path: '/orders/:orderId',
+        path: 'orders/:orderId',
         component: <EditOrder/>,
     },
     {
-        path: '/orders/:orderId/packing_slip',
+        path: 'orders/:orderId/packing_slip',
         component: <PackingSlip/>,
     },
     {
-        path: '/Calendar',
+        path: 'Calendar',
         component: <Calendar/>,
     },
     {
-        path: '/documents/*',
+        path: 'documents/*',
         component: <Documents/>,
     },
     {
-        path: '/documents/invoices/:orderId',
+        path: 'documents/invoices/:orderId',
         component: <Invoices/>,
     },
     {
-        path: '/documents/schoolinfo/:orderId',
+        path: 'documents/schoolinfo/:orderId',
         component: <SchoolInfo />
     },
     {
-        path: '/Customers',
+        path: 'Customers',
         component: <Customers/>,
     },
     {
-        path: '/Customers/new',
+        path: 'Customers/new',
         component: <AddCustomer/>,
     },
     {
-        path: '/customers/details/:id/*',
+        path: 'customers/details/:id/*',
         component: <CustomerDetails/>,
     },
     {
-        path: '/Products',
+        path: 'Products',
         component: <Products/>,
     },
     {
-        path: '/products/details/:id/*',
+        path: 'products/details/:id/*',
         component: <ProductsDetails/>
     },
     {
-        path: '/Bundles',
+        path: 'Bundles',
         component: <Products/>,
     },
     {
-        path: '/bundles/details/:id/*',
+        path: 'bundles/details/:id/*',
         component: <BundlesDetails/>
     },
     {
-        path: '/Products/new',
+        path: 'Products/new',
         component: <AddNewProducts/>,
     },
     {
-        path: '/Bundles/new',
+        path: 'Bundles/new',
         component: <AddNewBundles/>,
     },
 ]

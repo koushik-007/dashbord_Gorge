@@ -24,6 +24,9 @@
 .steps {
     max-width: 700px;
 }
+.steps a{
+    color: black;
+}
 .step {
     text-align: left;
     border: 1px #dde1e3 solid;
@@ -35,11 +38,10 @@
     padding: 15px 0px 15px 15px;
     display: inline-block;
     overflow: hidden;
-}
-
-.clickable {
+    background: none;
     cursor: pointer;
 }
+
 .step.step-product:before {
     content: '\f187';
     line-height: 18px;
@@ -48,7 +50,7 @@
 }
  .step.step-icon:before {
     font-family: 'icomoon', 'FontAwesome';
-    speak: none;
+    image-rendering: pixelated;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;

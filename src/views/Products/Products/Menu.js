@@ -4,12 +4,12 @@ import { GiftOutlined } from '@ant-design/icons'
 export const items = [
     {
         label: ' Add product',
-        link: '/products/new',
+        link: '/dashboard/products/new',
         icon: <FaBox/>
     },
     {
         label: 'Add bundle',
-        link: '/bundles/new',
+        link: '/dashboard/bundles/new',
         icon: <GiftOutlined/>
     }
 ]

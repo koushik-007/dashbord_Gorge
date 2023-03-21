@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { SearchOutlined } from '@ant-design/icons';
 import Header from '../../components/Header';
-import Menu from "../../components/Menu"
 import { Input, Row, Col, Typography, Layout, Button, Table, Spin } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import "./Customers.css";
 import { collection } from 'firebase/firestore';
 import { db, getAllData } from '../../Firebasefunctions/db';
-import { columns, items } from './tableHelper';
+import { columns } from './tableHelper';
 
 const { Title } = Typography;
 const { Content, } = Layout;
@@ -60,7 +59,7 @@ const Customers = () => {
                     <Col className='addBtn' sm={4} md={8} lg={12}>
                         <div>
                             <Button
-                                onClick={() => { navigate("/customers/new") }}
+                                onClick={() => { navigate("new") }}
                                 type="primary"
                                 size='large'
                             >
@@ -108,7 +107,7 @@ const Customers = () => {
                                     dataSource={data}
                                     onRow={(record, rowIndex) => {
                                         return {
-                                            onClick: event => navigate(`/customers/details/${record.key}/edit`)
+                                            onClick: event => navigate(`details/${record.key}/edit`)
                                         };
                                     }
                                     }

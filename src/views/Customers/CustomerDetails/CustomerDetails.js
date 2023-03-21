@@ -62,7 +62,7 @@ const CustomerDetails = () => {
                             onChange={(key) => naviage(key)}
                              items={[
                                 {
-                                    label: 'Information', key: `/customers/details/${id}/edit`, children: <Form
+                                    label: 'Information', key: `/dashboard/customers/details/${id}/edit`, children: <Form
                                         form={form}
                                         name="customer-form"
                                         className="customer-form"
@@ -80,7 +80,7 @@ const CustomerDetails = () => {
                                         <CustomerForm loading={isUpdateLoading} isDelete={true} id={id} isDisabled={isDisabled} />
                                     </Form>
                                 },
-                                { label: 'Orders', key: `/customers/details/${id}/orders`, children: <CustomerOrder customerId={id} /> },                                
+                                { label: 'Orders', key: `/dashboard/customers/details/${id}/orders`, children: <CustomerOrder customerId={id} /> },                                
                             ]}>
                             </Tabs>
                         </Content>

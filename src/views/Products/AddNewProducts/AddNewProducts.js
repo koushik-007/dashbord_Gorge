@@ -97,7 +97,7 @@ const AddNewProduct = () => {
     const variationCollection = collection(db, "product_collections", res.id, 'variations');
     const pickedUp = data.tracking_method === "Rental product" ? 0 : null
     await addDocumentData(variationCollection, { price: parseFloat(data.price), stock: 0, pickedUp, product_name: data.product_name })
-    navigate('/products/details/' + res.id + '/inventory');
+    navigate('/dashboard/products/details/' + res.id + '/inventory');
     setLoading(false)
   };
 

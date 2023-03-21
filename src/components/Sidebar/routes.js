@@ -10,37 +10,37 @@ import {
   import { BiDockTop } from 'react-icons/bi'
 export const routes = [
     {
-        path: '/orders/new',
+        path: 'orders/new',
         popover: ['New rental order'],
         icon: <PlusOutlined/>
     },
     {
-        path: '/',
+        path: '/dashboard',
         popover: ['Dashboard'],
         icon: <DashboardOutlined />
     },
     {
-        path: '/orders',
+        path: 'orders',
         popover: ['Orders'],
         icon: <InboxOutlined />
     },
     {
-        path: '/calendar',
+        path: 'calendar',
         popover: ['Calendar'],
         icon: <CalendarOutlined />
     },
     {
-        path: '/documents',
+        path: 'documents',
         popover: ['Documents'],
         icon: <FileOutlined />
     },
     {
-        path: '/customers',
+        path: 'customers',
         popover: ['Customers'],
         icon: <FaRegUser/>
     },
     {
-        path: '/products',
+        path: 'products',
         popover: ['Products'],
         icon: <BiDockTop/>
     },

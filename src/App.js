@@ -4,6 +4,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  Navigate,
 } from "react-router-dom";
 import 'antd/dist/antd.css';
 import AllOrderDataContext from './context/AllOrderDataContext';
@@ -23,30 +24,34 @@ const ShopCart = lazy(() => import('./pages/Shop/ShopCart'));
 function App() {
   return (
     <AuthContext>
-    <AllOrderDataContext>
-      <PriceContext>
-        <ShopCartContext>
-          <RentalPeriodContext>
-            <VariationDataContext>
-              <CartWarningContext>
-                <BrowserRouter>
-                  <Suspense fallback={<Spin className='fallback' indicator={<LoadingOutlined spin />} />}>
-                    <Routes>
-                      <Route path="/*" element={
-                      <PrivateRoute>
-                        <Dashboard />
-                      </PrivateRoute>} />
-                      <Route exact path="/auth" element={<Authentication />} />
-                      <Route exact path="/shop/*" element={<ShopCart />} />
-                    </Routes>
-                  </Suspense>
-                </BrowserRouter>
-              </CartWarningContext>
-            </VariationDataContext>
-          </RentalPeriodContext>
-        </ShopCartContext>
-      </PriceContext>
-    </AllOrderDataContext>
+      <AllOrderDataContext>
+        <PriceContext>
+          <ShopCartContext>
+            <RentalPeriodContext>
+              <VariationDataContext>
+                <CartWarningContext>
+                  <BrowserRouter>
+                    <Suspense fallback={<Spin className='fallback' indicator={<LoadingOutlined spin />} />}>
+                      <Routes>
+                        <Route exact path="/dashboard/*" element={
+                          <PrivateRoute>
+                            <Dashboard />
+                          </PrivateRoute>} />
+                        <Route exact path="/auth" element={<Authentication />} />
+                        <Route exact path="/shop/*" element={<ShopCart />} />
+                        <Route
+                          path="*"
+                          element={<Navigate to="/shop" replace />}
+                        />
+                      </Routes>
+                    </Suspense>
+                  </BrowserRouter>
+                </CartWarningContext>
+              </VariationDataContext>
+            </RentalPeriodContext>
+          </ShopCartContext>
+        </PriceContext>
+      </AllOrderDataContext>
     </AuthContext>
   );
 }

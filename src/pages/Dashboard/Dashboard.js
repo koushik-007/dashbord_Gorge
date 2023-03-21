@@ -9,12 +9,12 @@ const Dashboard = () => {
         <DashboardLayout>
             <Routes>
                 {
-                    routes.map(({ path, component }, index) => <Route key={index} path={path} element={component} />)
+                    routes.map(({ path, component }, index) => <Route exact key={index} path={path} element={component} />)
                 }
                 <Route
-                    path="/documents"
-                    element={<Navigate to="/documents/invoices" replace />}
-                />
+                    path="documents"
+                    element={<Navigate to="invoices" replace />}
+                />                
             </Routes>
 
         </DashboardLayout>

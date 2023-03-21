@@ -48,7 +48,7 @@ const AddNewBundles = () => {
       price: 0,
       fixedPrice: false
     });
-    navigate('/bundles/details/'+res.id + '/content');
+    navigate('/dashboard/bundles/details/'+res.id + '/content');
     setLoading(false)
   };
 

@@ -52,7 +52,7 @@ const BundlesTable = () => {
         dataSource={data}
         onRow={(record, rowIndex) => {
           return {
-            onClick: event => navigate(`/bundles/details/${record.key}/content`)
+            onClick: event => navigate(`details/${record.key}/content`)
           };
         }}
       />

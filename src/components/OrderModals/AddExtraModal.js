@@ -1,13 +1,31 @@
 import React from 'react';
 import { Button, Form, Input, Modal, Space } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { collection } from 'firebase/firestore';
-import { addDocumentData, db } from '../../Firebasefunctions/db';
+import { collection, doc, query, updateDoc, where } from 'firebase/firestore';
+import { addDocumentData, db, getAllData } from '../../Firebasefunctions/db';
 import { useState } from 'react';
+import { useEffect } from 'react';
 const AddExtraModal = ({ isOpenModal, setIsOpenModal, orderId }) => {
     const [form] = Form.useForm();
     const extraCollRef = collection(db, "student_collections");
     const [loading, setLoading] = useState(false);
+    const [schoolinfo, setSchoolInfo] = useState({});
+    const schoolinfoDocRef = collection(db, "student_collections");
+
+    const getSchoolData = async () => {
+        setLoading(true);
+        const q = query(schoolinfoDocRef, where("orderId", "==", orderId))
+        const data = await getAllData(q);        
+        setSchoolInfo(data[0]);
+        setLoading(false);
+    };
+    useEffect(() => {
+        getSchoolData();
+    }, []);
+
+    useEffect(() => {
+        form.setFieldsValue(schoolinfo)
+    }, [schoolinfo]);
     return (
         <Modal
             open={isOpenModal}
@@ -36,12 +54,19 @@ const AddExtraModal = ({ isOpenModal, setIsOpenModal, orderId }) => {
                             .validateFields()
                             .then(async (values) => {
                                 setLoading(true);
-                                await addDocumentData(extraCollRef, {...values, orderId});
+                                if (schoolinfo) {
+                                    const extraDocRef = doc(db, "student_collections", schoolinfo?.id);
+                                    await updateDoc(extraDocRef, values);
+                                }
+                                else{
+                                    await addDocumentData(extraCollRef, {...values, orderId});
+                                }
                                 form.resetFields();
                                 setLoading(false);
                                 setIsOpenModal(false)
                             })
                             .catch((info) => {
+                                setLoading(false);
                                 console.log('Validate Failed:', info);
                             });
                     }}

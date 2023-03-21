@@ -12,7 +12,7 @@ const SignUp = () => {
     const navigate = useNavigate();
     let location = useLocation();
 
-    let from = location.state?.from?.pathname || "/";
+    let from = location.state?.from?.pathname || "/dashboard";
     const [loading, setLoading] = useState(false);
     function onFinish(values) {
         setLoading(true);

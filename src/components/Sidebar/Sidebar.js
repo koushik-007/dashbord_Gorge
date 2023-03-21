@@ -46,8 +46,8 @@ const Sidebar = () => {
                 style={{ width: "61px" }}
                 theme="light"
                 mode="inline"
-                defaultSelectedKeys={[pathname]}
-                selectedKeys={[ paths[1] === 'bundles' ? '/products' : `/${paths[1]}`]}
+                defaultSelectedKeys={[paths[2]]}
+                selectedKeys={[ paths[2] === 'bundles' ? 'products' : `${paths[2]}`]}
                 items={items}
             />
         </Sider>

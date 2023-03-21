@@ -30,7 +30,7 @@ const Orders = () => {
                     <Col className='addBtn' sm={4} md={8} lg={12}>
                         <div>
                             <Button
-                                onClick={() => { navigate("/orders/new") }}
+                                onClick={() => { navigate("new") }}
                                 type="primary"
                                 size='large'
                             >

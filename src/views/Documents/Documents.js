@@ -3,7 +3,7 @@ import { Button, Card, Col, Input, Layout, Row, Space, Table, Tabs, Typography }
 import Header from '../../components/Header';
 import { SearchOutlined } from '@ant-design/icons';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../Firebasefunctions/db';
 
 const { Title } = Typography;
@@ -42,8 +42,9 @@ const Documents = () => {
         setLoading(true);
         const getData = async () => {
             try {
-                const q = query(ordersCollectionsRef, orderBy("orderNumber", 'desc'));
+                const q = query(ordersCollectionsRef, where("status", '!=', 'Canceled'), orderBy("status"), orderBy("orderNumber", 'desc'));
                 const querySnapshot = await getDocs(q);
+                
                 const data = querySnapshot.docs.map((doc, index) => {
                     const { name, firstName, lastName, orderNumber, price, amount, secuirityDeposit, registerPaymentDate } = doc.data();
                     return {
@@ -103,7 +104,7 @@ const Documents = () => {
                     onChange={(key) => navigate(key)}
                     items={[
                         {
-                            label: "Invoices", key: '/documents/invoices', children: <>
+                            label: "Invoices", key: '/dashboard/documents/invoices', children: <>
                                 <Row gutter={[24, 24]}>
                                     <Col span={6}>
                                         <Card style={{ height: '120px' }}>
@@ -141,7 +142,7 @@ const Documents = () => {
                                         x: 1100,
                                         y: 400
                                     }}
-                                    onRow={(record, rowIndex) => ({ onClick: event => navigate(`/documents/invoices/${record.key}`) })}
+                                    onRow={(record, rowIndex) => ({ onClick: event => navigate(`invoices/${record.key}`) })}
                                 >
                                     {
                                         columns.map(({ title, dataIndex, render, width, sorter }) => <Column

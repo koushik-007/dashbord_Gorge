@@ -8,7 +8,7 @@ const SocialNetwork = () => {
     const { handleSigninWithGmail, handleSignInWithApple } = useContext(AuthContextProvider);
     const navigate = useNavigate();
     let location = useLocation();
-    let from = location.state?.from?.pathname || "/";
+    let from = location.state?.from?.pathname || "/dashboard";
     
     async function signinWithGmail() {
         handleSigninWithGmail().then((res) => {

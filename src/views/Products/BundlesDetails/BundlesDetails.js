@@ -47,9 +47,9 @@ const BundlesDetails = () => {
                     activeKey={pathname}
                     onChange={(key) => navigate(key)}
                     items={[
-                        { label: "Contents", key: `/bundles/details/${id}/content`, children: <BundlesContent BundlesId={id} bundleData={bundleData} /> },
-                        { label: "Pricing", key: `/bundles/details/${id}/pricing`, children: <BundlesPricing bundleData={bundleData} BundlesId={id} /> },
-                        { label: "Settings", key: `/bundles/details/${id}/settings`, children: <BundlesSettings bundleData={bundleData} BundlesId={id} setBundleData={setBundleData} /> },
+                        { label: "Contents", key: `/dashboard/bundles/details/${id}/content`, children: <BundlesContent BundlesId={id} bundleData={bundleData} /> },
+                        { label: "Pricing", key: `/dashboard/bundles/details/${id}/pricing`, children: <BundlesPricing bundleData={bundleData} BundlesId={id} /> },
+                        { label: "Settings", key: `/dashboard/bundles/details/${id}/settings`, children: <BundlesSettings bundleData={bundleData} BundlesId={id} setBundleData={setBundleData} /> },
                     ]}>
                 </Tabs>
             </Content>
