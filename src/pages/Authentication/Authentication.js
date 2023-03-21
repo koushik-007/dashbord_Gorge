@@ -11,7 +11,7 @@ const { useBreakpoint } = Grid;
 const { Link } = Typography;
 
 const Authentication = () => {
-  const { logout } = useContext(AuthContextProvider);
+  const { logout, user } = useContext(AuthContextProvider);
   const screens = useBreakpoint();
   const [isPanelRightActive, setIsPanelRightActive] = useState(false);
   const switchMode = () => {
@@ -41,25 +41,28 @@ const Authentication = () => {
         });
       navigate(from, { replace: true });
     }
-    await logout()
-    message.info(
-      {
-        content: <div>Not Admin</div>,
-        className: 'notify_saved_customer',
-      });
-    navigate('/shop', {replace: true})
+    else {
+      await logout()
+      message.info(
+        {
+          content: <div>Not Admin</div>,
+          className: 'notify_saved_customer',
+        });
+      navigate('/shop', { replace: true })
+    }
   }
   return (
     <div className="auth-page">
       {
         screens.sm ?
           <div className="auth-page-wrapper">
+            <h1>{user?.email}</h1>
             <div
               className={`auth-container ${isPanelRightActive ? "right-panel-active" : ""
                 }`}
             >
               <div className="form-container sign-up-container">
-                <SignUp checkAdmin={checkAdmin}/>
+                <SignUp checkAdmin={checkAdmin} />
               </div>
               <div className="form-container sign-in-container">
                 <SignIn checkAdmin={checkAdmin} />
