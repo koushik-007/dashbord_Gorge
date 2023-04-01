@@ -2,17 +2,20 @@ import React, { memo, useContext } from 'react';
 import { Button, message, Tooltip } from 'antd';
 import { FcGoogle } from "react-icons/fc";
 import { AuthContextProvider } from '../../context/AuthContext';
-const SocialNetwork = ({checkAdmin}) => {
+const SocialNetwork = ({ checkAdmin }) => {
     const { handleSigninWithGmail, handleSignInWithApple } = useContext(AuthContextProvider);
-    
+
     async function signinWithGmail() {
-        handleSigninWithGmail().then((res) => {
-            if (res?.email) {
-                checkAdmin(res?.email, "Successfully Signin")                               
-            }
-        }).catch((error) => {
-            message.error("please try with another mail");
-        });
+        handleSigninWithGmail()
+            .then((res) => {
+                console.log(res);
+                if (res?.email) {
+                    checkAdmin(res?.email, "Successfully Signin")
+                }
+            })
+            .catch((error) => {
+                message.error("please try with another mail");
+            });
     }
     // async function signinWithApple() {
     //     handleSignInWithApple().then((res) => {

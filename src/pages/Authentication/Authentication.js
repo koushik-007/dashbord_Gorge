@@ -43,7 +43,7 @@ const Authentication = () => {
     }
     else {
       await logout()
-      message.info(
+      message.error(
         {
           content: <div>Not Admin</div>,
           className: 'notify_saved_customer',
@@ -56,7 +56,7 @@ const Authentication = () => {
       {
         screens.sm ?
           <div className="auth-page-wrapper">
-            <h1>{user?.email}</h1>
+          
             <div
               className={`auth-container ${isPanelRightActive ? "right-panel-active" : ""
                 }`}
